@@ -3,6 +3,7 @@
   parser: "babel-eslint",
   rules: {
     strict: 0,
+    no-unused-vars: 1,
     react/jsx-filename-extension: 0,
     keyword-spacing: 0,
     react/forbid-prop-types: 0,

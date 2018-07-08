@@ -3,8 +3,6 @@ import { AfterRoot, AfterData } from '@jaredpalmer/after';
 import qatch from 'await-to-js';
 import PropTypes from 'prop-types';
 
-import ErrorPage from './ErrorPage';
-
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
     const [error, page] = await qatch(renderPage());
@@ -12,11 +10,7 @@ export default class Document extends React.Component {
   }
 
   render() {
-    const { helmet, assets, data, initialApolloState, error } = this.props;
-
-    // if(error) {
-    //   return <ErrorPage error={error} assets={assets} />;
-    // }
+    const { helmet, assets, data, initialApolloState } = this.props;
 
     // get attributes from React Helmet
     const htmlAttrs = helmet.htmlAttributes.toComponent();
@@ -31,6 +25,8 @@ export default class Document extends React.Component {
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <meta name="theme-color" content="#000000" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
           {helmet.title.toComponent()}
           {helmet.meta.toComponent()}
           {helmet.link.toComponent()}
@@ -39,12 +35,7 @@ export default class Document extends React.Component {
           <AfterRoot />
           <AfterData data={data} />
           <script dangerouslySetInnerHTML={{ __html: `window.__APOLLO_STATE__=${JSON.stringify(initialApolloState).replace(/</g, '\\u003c')};` }} />
-          <script
-            type="text/javascript"
-            src={assets.client.js}
-            defer
-            crossOrigin="anonymous"
-          />
+          <script type="text/javascript" src={assets.client.js} defer crossOrigin="anonymous" />
         </body>
       </html>
     );
