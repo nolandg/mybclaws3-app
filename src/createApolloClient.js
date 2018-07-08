@@ -15,21 +15,21 @@ const httpLink = createHttpLink({
 
 // GraphQl error handling
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors){
+  if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
-      console.error(chalk.red(`\n[GraphQL Link Error]`));
-      console.error(chalk.blue(`\tMessage: `) + `${message}`);
-      console.error(chalk.blue(`\tLocations: `));
-      locations.forEach(({line, column}) => {
-        console.error(chalk.blue(`\t\tLine: `) + `${line}` + chalk.blue(` Column: `) + `${column}`);
+      console.error(chalk.red('\n[GraphQL Link Error]'));
+      console.error(`${chalk.blue('\tMessage: ')}${message}`);
+      console.error(chalk.blue('\tLocations: '));
+      locations.forEach(({ line, column }) => {
+        console.error(`${chalk.blue('\t\tLine: ')}${line}${chalk.blue(' Column: ')}${column}`);
       });
-      console.error(chalk.blue(`\tPath: `) + `${path}`);
+      console.error(`${chalk.blue('\tPath: ')}${path}`);
     });
   }
 
   if(networkError) {
-    console.error(chalk.red(`\n[GraphQL Link Network Error]`));
-    console.error(chalk.blue(`\tMessage: `) + `${networkError}`);
+    console.error(chalk.red('\n[GraphQL Link Network Error]'));
+    console.error(`${chalk.blue('\tMessage: ')}${networkError}`);
   }
 });
 
@@ -49,7 +49,6 @@ function createApolloClient({ ssrMode }) {
       : new InMemoryCache().restore(window.__APOLLO_STATE__),
   });
 }
-
 
 
 export default createApolloClient;

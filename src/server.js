@@ -21,16 +21,14 @@ server
 
     const customRenderer = (node) => {
       const App = <ApolloProvider client={client}>{node}</ApolloProvider>;
+      const gatherData = (error) => {
+        const initialApolloState = client.extract();
+        const html = renderToString(App);
+        return { html, initialApolloState, error };
+      };
       return getDataFromTree(App)
-        .then(() => {
-          const initialApolloState = client.extract();
-          const html = renderToString(App);
-          console.log('then then');
-          return { html, initialApolloState };
-        })
-        .catch((error) => {
-          throw error;
-        });
+        .then(() => gatherData(null))
+        .catch(error => gatherData(error));
     };
 
     try {

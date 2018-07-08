@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const QUERY = gql`
   query Users{
-    userss {
+    users {
       username
       email
     }
@@ -15,21 +15,22 @@ const QUERY = gql`
 `;
 
 class Home extends Component {
-  // static async getInitialProps({ req, res, match, history, location, ...ctx }) {
-  //   return {data: 'hi'};
-  // }
-
   render() {
     const { data } = this.props;
-    const loading = data.loading === true;
+    const { loading, error } = data;
 
     if(loading) return 'Waiting for data...';
+    if(error) {
+      console.error(error);
+      return 'There was an error :-(';
+    }
 
     return (
       <div className="Home">
         <h1>My BC Laws</h1>
-        Users: {data.users.length} <br />
+        User Count: {data.users.length} <br />
         User 0: {data.users[0].username} <br />
+        User 1: {data.users[1].username} <br />
         <Link to="/about">About</Link>
       </div>
     );
@@ -42,5 +43,5 @@ Home.propTypes = {
 
 // export default Home;
 export default graphql(QUERY, {
-  options: { errorPolicy: 'all' },
+  options: { errorPolicy: 'none' },
 })(Home);

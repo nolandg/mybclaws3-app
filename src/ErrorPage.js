@@ -40,7 +40,6 @@ class ErrorPage extends Component {
 
 ErrorPage.propTypes = {
   error: PropTypes.object.isRequired,
-  assets: PropTypes.object.isRequired,
 };
 
 export default ErrorPage;

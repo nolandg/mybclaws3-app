@@ -14,9 +14,9 @@ export default class Document extends React.Component {
   render() {
     const { helmet, assets, data, initialApolloState, error } = this.props;
 
-    if(error) {
-      return <ErrorPage error={error} assets={assets} />;
-    }
+    // if(error) {
+    //   return <ErrorPage error={error} assets={assets} />;
+    // }
 
     // get attributes from React Helmet
     const htmlAttrs = helmet.htmlAttributes.toComponent();
