@@ -1,0 +1,41 @@
+{
+  "name": "razzle-examples-with-afterjs",
+  "version": "2.2.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "razzle start",
+    "build": "razzle build",
+    "test": "razzle test --env=jsdom",
+    "start:prod": "NODE_ENV=production node build/server.js"
+  },
+  "dependencies": {
+    "@jaredpalmer/after": "latest",
+    "apollo-cache-inmemory": "^1.2.5",
+    "apollo-client": "^2.3.5",
+    "apollo-link-error": "^1.1.0",
+    "apollo-link-http": "^1.5.4",
+    "await-to-js": "^2.0.1",
+    "chalk": "^2.4.1",
+    "express": "^4.16.2",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.10",
+    "lodash.set": "^4.3.2",
+    "prop-types": "^15.6.2",
+    "razzle": "^2.2.0",
+    "react": "^16.2.0",
+    "react-apollo": "^2.1.9",
+    "react-dom": "^16.2.0",
+    "react-helmet": "^5.2.0",
+    "react-router-dom": "^4.2.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.5",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.9.1"
+  }
+}
