@@ -3,16 +3,29 @@ import { hydrate } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { ensureReady, After } from '@jaredpalmer/after';
 import { ApolloProvider } from 'react-apollo';
-import './client.css';
+import Helmet from 'react-helmet';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+import './client.scss';
 import routes from './routes';
 import createApolloClient from './createApolloClient';
 
 const client = createApolloClient({ ssrMode: false });
 
+const muiTheme = createMuiTheme({
+});
+
 ensureReady(routes).then(data => hydrate(
   <ApolloProvider client={client}>
+    <Helmet>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    </Helmet>
+
     <BrowserRouter>
-      <After data={data} routes={routes} />
+      <MuiThemeProvider theme={muiTheme}>
+        <After data={data} routes={routes} />
+      </MuiThemeProvider>
     </BrowserRouter>
   </ApolloProvider>,
   document.getElementById('root'),

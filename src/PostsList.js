@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import SaveIcon from '@material-ui/icons/Save';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
-import './Home.css';
-
-// import { Link } from 'react-router-dom';
 
 const QUERY = gql`
   query Posts{
@@ -22,7 +18,10 @@ const QUERY = gql`
 class PostsList extends Component {
   renderPost = post => (
     <div key={post._id}>
-      <h4>{post.title}</h4>
+      <Typography variant="display2" gutterBottom>{post.title}</Typography>
+      <Button variant="contained">
+        <SaveIcon />Add a thing
+      </Button>
     </div>
   )
 
@@ -32,20 +31,15 @@ class PostsList extends Component {
 
     if(loading) return 'Waiting for data...';
     if(error) {
-      console.error(error);
+      console.error('Error getting data in component: ', error);
       return 'There was an error :-(';
     }
 
     return (
       <div>
-        <Paper className={classes.root} elevation={1}>
-          <Typography variant="headline" component="h3">
-            This is a sheet of paper.
-          </Typography>
-          <Typography component="p">
-            Paper can be used to build surface or other elements for your application.
-          </Typography>
-        </Paper>
+        <Typography variant="display3" gutterBottom>
+          Posts List
+        </Typography>
         {data.posts.map(post => this.renderPost(post))}
       </div>
     );
