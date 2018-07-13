@@ -2,10 +2,22 @@ import * as React from 'react';
 import { AfterRoot, AfterData } from '@jaredpalmer/after';
 import qatch from 'await-to-js';
 import PropTypes from 'prop-types';
+import { JssProvider, SheetsRegistry } from 'react-jss';
+import { createGenerateClassName } from '@material-ui/core/styles';
 
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
-    const [error, page] = await qatch(renderPage());
+    const sheets = new SheetsRegistry();
+    const generateClassName = createGenerateClassName();
+
+    const [error, page] = await qatch(renderPage(After => props => (
+      <JssProvider registry={sheets} generateClassName={generateClassName}>
+        <After {...props} />
+      </JssProvider>
+    )));
+
+    // const [error, page] = await qatch(renderPage());
+
     if(error) {
       // ToDo: decide if error is fatal
       const fatal = true;
@@ -13,16 +25,11 @@ export default class Document extends React.Component {
         throw error;
       }
     }
-    return { assets, data, error, ...page };
-  }
-
-  componentDidCatch = (error, info) => {
-    console.log('componentDidCatch', error);
-    console.log('componentDidCatch', info);
+    return { assets, data, error, sheets, ...page };
   }
 
   render() {
-    const { helmet, assets, data, initialApolloState } = this.props;
+    const { helmet, assets, data, initialApolloState, sheets } = this.props;
 
     // get attributes from React Helmet
     const htmlAttrs = helmet.htmlAttributes.toComponent();
@@ -40,6 +47,10 @@ export default class Document extends React.Component {
           {helmet.title.toComponent()}
           {helmet.meta.toComponent()}
           {helmet.link.toComponent()}
+          {assets.client.css && (
+            <link rel="stylesheet" href={assets.client.css} />
+          )}
+          <style type="text/css">{sheets.toString()}</style>
         </head>
         <body {...bodyAttrs}>
           <AfterRoot />
@@ -55,7 +66,12 @@ export default class Document extends React.Component {
 Document.propTypes = {
   helmet: PropTypes.object.isRequired,
   assets: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.object,
   initialApolloState: PropTypes.object.isRequired,
-  error: PropTypes.object.isRequired,
+  error: PropTypes.object,
+  sheets: PropTypes.any.isRequired,
+};
+Document.defaultProps = {
+  data: null,
+  error: null,
 };

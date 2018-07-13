@@ -17,6 +17,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 
+import gqlError from './gqlError';
+
 const QUERY = gql`
   query Posts($start: Int, $limit: Int){
     posts(start: $start, limit: $limit) {
@@ -40,7 +42,7 @@ const QUERY2 = gql`
   }
 `;
 
-const styles = theme => ({
+const styles = () => ({
   addPostRoot: {
     flexDirection: 'column',
   },
@@ -51,6 +53,10 @@ const styles = theme => ({
 });
 
 class AddPostInner extends Component {
+  state = {
+    title: 'i am title',
+  }
+
   handleAddPostClick = () => {
     fetch('http://localhost:1337/post', {
       method: 'POST',
@@ -58,11 +64,15 @@ class AddPostInner extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        title: Date().toString(),
+        title: this.state.title,
       }),
-    }).then(response => response.json()).then((json) => {
+    }).then(response => response.json()).then(() => {
       this.props.client.query({
         query: QUERY,
+        variables: {
+          start: 0,
+          limit: 3,
+        },
         fetchPolicy: 'network-only',
       });
       this.props.client.query({
@@ -72,6 +82,10 @@ class AddPostInner extends Component {
     }).catch((error) => {
       console.error(error);
     });
+  }
+
+  handleTitleChange = (e) => {
+    this.setState({ title: e.target.value });
   }
 
   render() {
@@ -84,6 +98,9 @@ class AddPostInner extends Component {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.addPostRoot}>
           <TextField
+            onChange={this.handleTitleChange}
+            value={this.state.title}
+            name="title"
             label="Title"
             helperText="Enter a descriptive title for this post"
             margin="normal"
@@ -142,11 +159,13 @@ class PostsList extends Component {
     if(loading) return 'Waiting for data...';
     if(error) {
       console.error('Error getting data in component: ', error);
-      return 'There was an error :-(';
+      return (
+        <div>
+          Error: {gqlError(error).message}
+        </div>
+      );
     }
     if(!data.posts) return 'no data :-(';
-
-    // if(3) throw new Error('OMG!!!');
 
     return (
       <div>
@@ -181,9 +200,9 @@ PostsList.propTypes = {
 // export default Home;
 export default withApollo(graphql(QUERY, {
   options: {
-    errorPolicy: 'all',
+    errorPolicy: 'none',
     variables: {
-      start: 4,
+      start: 0,
       limit: 3,
     },
   },
