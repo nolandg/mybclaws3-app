@@ -6,7 +6,19 @@ import PropTypes from 'prop-types';
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
     const [error, page] = await qatch(renderPage());
+    if(error) {
+      // ToDo: decide if error is fatal
+      const fatal = true;
+      if(fatal) {
+        throw error;
+      }
+    }
     return { assets, data, error, ...page };
+  }
+
+  componentDidCatch = (error, info) => {
+    console.log('componentDidCatch', error);
+    console.log('componentDidCatch', info);
   }
 
   render() {

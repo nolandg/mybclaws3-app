@@ -1,16 +1,22 @@
 /* eslint-disable no-use-before-define */
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
+import { BatchHttpLink } from 'apollo-link-batch-http';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import fetch from 'isomorphic-fetch';
 import { onError } from 'apollo-link-error';
 import chalk from 'chalk';
 
-const httpLink = createHttpLink({
+// const httpLink = createHttpLink({
+const httpLink = new BatchHttpLink({
   uri: 'http://localhost:1337/graphql',
   credentials: 'same-origin',
   fetch,
+  fetchOptions: {
+    batchMax: 10,
+    batchInterval: 10,
+  },
 });
 
 // GraphQl error handling
