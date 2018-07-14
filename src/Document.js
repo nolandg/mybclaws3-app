@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import * as React from 'react';
 import { AfterRoot, AfterData } from '@jaredpalmer/after';
 import qatch from 'await-to-js';
@@ -5,18 +6,16 @@ import PropTypes from 'prop-types';
 import { JssProvider, SheetsRegistry } from 'react-jss';
 import { createGenerateClassName } from '@material-ui/core/styles';
 
+const sheets = new SheetsRegistry();
+const generateClassName = createGenerateClassName();
+
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
-    const sheets = new SheetsRegistry();
-    const generateClassName = createGenerateClassName();
-
     const [error, page] = await qatch(renderPage(After => props => (
       <JssProvider registry={sheets} generateClassName={generateClassName}>
         <After {...props} />
       </JssProvider>
     )));
-
-    // const [error, page] = await qatch(renderPage());
 
     if(error) {
       // ToDo: decide if error is fatal
@@ -37,6 +36,7 @@ export default class Document extends React.Component {
     return (
       <html {...htmlAttrs}>
         <head>
+          <meta name="Made With Love By: " content="Noland" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <meta charSet="utf-8" />
           <title>After with Apollo !</title>
