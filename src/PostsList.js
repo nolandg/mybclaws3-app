@@ -5,82 +5,48 @@ import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-// import CardContent from '@material-ui/core/CardContent';
-// import Card from '@material-ui/core/Card';
-// import CardActions from '@material-ui/core/CardActions';
-
 
 import AddPost from './AddPost';
 import { register } from './queryRegistry';
 import gqlError from './gqlError';
 
-
-const postsQuery = {
-  query: gql`
-    query Posts($start: Int, $limit: Int){
-      posts(start: $start, limit: $limit) {
-        _id
-        title
-        body
-      },
-      users {
-        _id
-        username
-      }
-    }`,
-  variables: {
-    start: 0,
-    limit: 3,
-  },
-};
-
-const usersQuery = {
-  query: gql`
-    query Posts($start: Int, $limit: Int){
-      users {
-        _id
-        username
-      },
-    }`,
-};
-
-register(postsQuery);
-register(usersQuery);
+const POSTS_QUERY = gql`
+  query Posts($start: Int, $limit: Int){
+    posts(start: $start, limit: $limit) {
+      _id
+      title
+      body
+    },
+    users {
+      _id
+      username
+    }
+  }
+`;
 
 class PostsList extends Component {
   renderPost = post => (
     <div key={post._id}>
       Title: {post.title}
     </div>
-    // <Card key={post._id} className="post">
-    //   <CardContent>
-    //     <Typography gutterBottom variant="headline" component="h2">
-    //       {post.title}
-    //     </Typography>
-    //     <Typography component="p">
-    //       {post.body}
-    //     </Typography>
-    //   </CardContent>
-    //   <CardActions>
-    //     <Button variant="contained" color="primary">
-    //       <SaveIcon />Change shit
-    //     </Button>
-    //   </CardActions>
-    // </Card>
   )
 
-  handleLoadMore = () => {
-    const { fetchMore } = this.props.data;
-    const { variables } = postsQuery;
-    variables.limit += 2;
-    fetchMore({
-      variables,
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-        return Object.assign({}, prev, {
-          feed: [...prev.posts, ...fetchMoreResult.posts],
-        });
-      },
+  handleLoadMore = (fetchMore) => {
+    this.setState(({ variables }) => {
+      variables.start += variables.limit;
+      return { variables };
+    }, () => {
+      const { variables } = this.state;
+
+      fetchMore({
+        variables,
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return Object.assign({}, prev, {
+            posts: [...prev.posts, ...fetchMoreResult.posts],
+          });
+        },
+      });
     });
   }
 

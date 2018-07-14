@@ -43,7 +43,7 @@ class AddPostInner extends Component {
       }),
     }).then(response => response.json()).then(() => {
       const { client } = this.props;
-      runQueries(client);
+      runQueries();
     }).catch((error) => {
       console.error(error);
     });

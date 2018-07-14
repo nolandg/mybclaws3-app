@@ -34,6 +34,11 @@ class PostsList extends Component {
         limit: 2,
       },
     };
+    register(this.refetch);
+  }
+
+  refetch = () => {
+    if(this.refetch) this.refetch();
   }
 
   renderPost = post => (
@@ -61,7 +66,7 @@ class PostsList extends Component {
     });
   }
 
-  renderProp = ({ loading, error, data, fetchMore }) => {
+  renderProp = ({ loading, error, data, fetchMore, refetch }) => {
     if(loading) return 'Waiting for data...';
     if(error) {
       console.error('Error getting data in component: ', error);
@@ -72,6 +77,8 @@ class PostsList extends Component {
       );
     }
     if(!data.posts) return 'no data :-(';
+
+    this.refetch = refetch;
 
     return (
       <div>
