@@ -3,7 +3,6 @@ import { hydrate } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { ensureReady, After } from '@jaredpalmer/after';
 import { ApolloProvider } from 'react-apollo';
-import Helmet from 'react-helmet';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import './client.scss';

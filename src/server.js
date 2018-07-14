@@ -7,12 +7,16 @@ import stringifySafe from 'json-stringify-safe';
 import chalk from 'chalk';
 import qatch from 'await-to-js';
 import Youch from 'youch';
+import expressStaticGzip from 'express-static-gzip';
 
 import createApolloClient from './createApolloClient';
 import Document from './Document';
 import routes from './routes';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+
+console.log(process.env.RAZZLE_PUBLIC_DIR);
+console.log(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const server = express();
 server
@@ -70,5 +74,4 @@ server
       console.log(chalk.red('-----------------------------------------------------------------------------------------'));
     }
   });
-
 export default server;
