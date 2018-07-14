@@ -4,18 +4,19 @@ import { AfterRoot, AfterData } from '@jaredpalmer/after';
 import qatch from 'await-to-js';
 import PropTypes from 'prop-types';
 import { JssProvider } from 'react-jss';
-// import { createGenerateClassName } from '@material-ui/core/styles';
+import { SheetsRegistry } from 'react-jss/lib/jss';
+import { createGenerateClassName } from '@material-ui/core/styles';
 
-import { generateClassName, sheets } from './stylesProvider';
-
-// const sheets = new SheetsRegistry();
-// const generateClassName = createGenerateClassName();
+const sheetsRegistry = new SheetsRegistry();
+const generateClassName = createGenerateClassName();
 
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
     const [error, page] = await qatch(renderPage(After => props => (
-      <JssProvider registry={sheets} generateClassName={generateClassName}>
+      <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
+        {/* <MuiThemeProvider theme={theme} sheetsManager={new Map()}> */}
         <After {...props} />
+        {/* </MuiThemeProvider> */}
       </JssProvider>
     )));
 
@@ -26,11 +27,11 @@ export default class Document extends React.Component {
         throw error;
       }
     }
-    return { assets, data, error, sheets, ...page };
+    return { assets, data, error, sheetsRegistry, ...page };
   }
 
   render() {
-    const { helmet, assets, data, initialApolloState, sheets } = this.props;
+    const { helmet, assets, data, initialApolloState, sheetsRegistry } = this.props;
 
     // get attributes from React Helmet
     const htmlAttrs = helmet.htmlAttributes.toComponent();
@@ -52,7 +53,7 @@ export default class Document extends React.Component {
           {assets.client.css && (
             <link rel="stylesheet" href={assets.client.css} />
           )}
-          <style type="text/css">{sheets.toString()}</style>
+          <style type="text/css" id="jss-server-side">{sheetsRegistry.toString()}</style>
         </head>
         <body {...bodyAttrs}>
           <AfterRoot />
@@ -71,7 +72,7 @@ Document.propTypes = {
   data: PropTypes.object,
   initialApolloState: PropTypes.object.isRequired,
   error: PropTypes.object,
-  sheets: PropTypes.any.isRequired,
+  sheetsRegistry: PropTypes.any.isRequired,
 };
 Document.defaultProps = {
   data: null,

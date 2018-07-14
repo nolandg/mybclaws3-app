@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
-import { graphql, withApollo } from 'react-apollo';
-import fetch from 'isomorphic-fetch';
+import { graphql, withApollo, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
-import SaveIcon from '@material-ui/icons/Save';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
 // import CardContent from '@material-ui/core/CardContent';
 // import Card from '@material-ui/core/Card';
 // import CardActions from '@material-ui/core/CardActions';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { withStyles } from '@material-ui/core/styles';
-import qatch from 'await-to-js';
 
+
+import AddPost from './AddPost';
+import { register } from './queryRegistry';
 import gqlError from './gqlError';
 
 
@@ -50,103 +44,13 @@ const usersQuery = {
     }`,
 };
 
-const queryRegistry = [postsQuery, usersQuery];
-
-// const runQueries = (client) => {
-//   queryRegistry.forEach((q) => {
-//     console.log('query: ', q);
-//     const [error] = qatch(client.query({ query: q.query, variables: q.variables }));
-//     if(error) {
-//       console.error(error);
-//     }
-//   });
-// };
-const runQueries = (client) => {
-  queryRegistry.forEach(async ({ query, variables }) => {
-    console.log('query: ', query);
-    const [error] = await qatch(client.query({ query, variables }));
-    if(error) {
-      console.error(error);
-    }
-  });
-};
-
-const styles = () => ({
-  addPostRoot: {
-    flexDirection: 'column',
-  },
-  addPostButton: {
-    maxWidth: '15em',
-    alignSelf: 'flex-end',
-  },
-});
-
-class AddPostInner extends Component {
-  state = {
-    title: 'i am title',
-  }
-
-  handleAddPostClick = () => {
-    fetch('http://localhost:1337/post', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: this.state.title,
-      }),
-    }).then(response => response.json()).then(() => {
-      const { client } = this.props;
-      runQueries(client);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-
-  handleTitleChange = (e) => {
-    this.setState({ title: e.target.value });
-  }
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="title">Add Post</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.addPostRoot}>
-          <TextField
-            onChange={this.handleTitleChange}
-            value={this.state.title}
-            name="title"
-            label="Title"
-            helperText="Enter a descriptive title for this post"
-            margin="normal"
-          />
-          <br />
-          <Button onClick={this.handleAddPostClick} className={classes.addPostButton} variant="contained" color="primary">
-            <SaveIcon />Add a post
-          </Button>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    );
-  }
-}
-AddPostInner.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-AddPostInner.propTypes = {
-  client: PropTypes.object.isRequired,
-};
-
-const AddPost = withStyles(styles)(withApollo(AddPostInner));
+register(postsQuery);
+register(usersQuery);
 
 class PostsList extends Component {
   renderPost = post => (
     <div key={post._id}>
-      Title: reddddwwwwwwds{post.title}
+      Title: {post.title}
     </div>
     // <Card key={post._id} className="post">
     //   <CardContent>
@@ -214,10 +118,12 @@ PostsList.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-// export default Home;
-export default withApollo(graphql(postsQuery.query, {
-  options: {
-    errorPolicy: 'none',
-    variables: postsQuery.variables,
-  },
-})(PostsList));
+export default compose(
+  withApollo,
+  graphql(postsQuery.query, {
+    options: {
+      errorPolicy: 'none',
+      variables: postsQuery.variables,
+    },
+  }),
+)(PostsList);

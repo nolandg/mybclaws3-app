@@ -7,7 +7,6 @@ import stringifySafe from 'json-stringify-safe';
 import chalk from 'chalk';
 import qatch from 'await-to-js';
 import Youch from 'youch';
-import expressStaticGzip from 'express-static-gzip';
 
 import createApolloClient from './createApolloClient';
 import Document from './Document';
@@ -22,7 +21,7 @@ const server = express();
 server
   .disable('x-powered-by')
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', async (req, res) => { 
+  .get('/*', async (req, res) => {
     const client = createApolloClient({ ssrMode: true });
 
     const customRenderer = async (node) => {
