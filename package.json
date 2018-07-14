@@ -27,6 +27,7 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.10",
     "lodash.set": "^4.3.2",
+    "postcss-flexbugs-fixes": "^3.3.1",
     "prop-types": "^15.6.2",
     "razzle": "^2.2.0",
     "react": "^16.2.0",
@@ -35,6 +36,7 @@
     "react-helmet": "^5.2.0",
     "react-jss": "^8.6.1",
     "react-router-dom": "^4.2.2",
+    "resolve-url-loader": "^2.3.0",
     "youch": "^2.0.8"
   },
   "devDependencies": {
