@@ -3,11 +3,13 @@ import * as React from 'react';
 import { AfterRoot, AfterData } from '@jaredpalmer/after';
 import qatch from 'await-to-js';
 import PropTypes from 'prop-types';
-import { JssProvider, SheetsRegistry } from 'react-jss';
-import { createGenerateClassName } from '@material-ui/core/styles';
+import { JssProvider } from 'react-jss';
+// import { createGenerateClassName } from '@material-ui/core/styles';
 
-const sheets = new SheetsRegistry();
-const generateClassName = createGenerateClassName();
+import { generateClassName, sheets } from './stylesProvider';
+
+// const sheets = new SheetsRegistry();
+// const generateClassName = createGenerateClassName();
 
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {

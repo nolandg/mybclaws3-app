@@ -22,7 +22,7 @@ const server = express();
 server
   .disable('x-powered-by')
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', async (req, res) => {
+  .get('/*', async (req, res) => { 
     const client = createApolloClient({ ssrMode: true });
 
     const customRenderer = async (node) => {

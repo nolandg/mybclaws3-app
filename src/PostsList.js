@@ -4,43 +4,72 @@ import fetch from 'isomorphic-fetch';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import SaveIcon from '@material-ui/icons/Save';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import TablePagination from '@material-ui/core/TablePagination';
-import CardContent from '@material-ui/core/CardContent';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
+// import CardContent from '@material-ui/core/CardContent';
+// import Card from '@material-ui/core/Card';
+// import CardActions from '@material-ui/core/CardActions';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
+import qatch from 'await-to-js';
 
 import gqlError from './gqlError';
 
-const QUERY = gql`
-  query Posts($start: Int, $limit: Int){
-    posts(start: $start, limit: $limit) {
-      _id
-      title
-      body
-    },
-    users {
-      _id
-      username
-    }
-  }
-`;
 
-const QUERY2 = gql`
-  query Users{
-    users {
-      _id
-      username
+const postsQuery = {
+  query: gql`
+    query Posts($start: Int, $limit: Int){
+      posts(start: $start, limit: $limit) {
+        _id
+        title
+        body
+      },
+      users {
+        _id
+        username
+      }
+    }`,
+  variables: {
+    start: 0,
+    limit: 3,
+  },
+};
+
+const usersQuery = {
+  query: gql`
+    query Posts($start: Int, $limit: Int){
+      users {
+        _id
+        username
+      },
+    }`,
+};
+
+const queryRegistry = [postsQuery, usersQuery];
+
+// const runQueries = (client) => {
+//   queryRegistry.forEach((q) => {
+//     console.log('query: ', q);
+//     const [error] = qatch(client.query({ query: q.query, variables: q.variables }));
+//     if(error) {
+//       console.error(error);
+//     }
+//   });
+// };
+const runQueries = (client) => {
+  queryRegistry.forEach(async ({ query, variables }) => {
+    console.log('query: ', query);
+    const [error] = await qatch(client.query({ query, variables }));
+    if(error) {
+      console.error(error);
     }
-  }
-`;
+  });
+};
 
 const styles = () => ({
   addPostRoot: {
@@ -67,18 +96,8 @@ class AddPostInner extends Component {
         title: this.state.title,
       }),
     }).then(response => response.json()).then(() => {
-      this.props.client.query({
-        query: QUERY,
-        variables: {
-          start: 0,
-          limit: 3,
-        },
-        fetchPolicy: 'network-only',
-      });
-      this.props.client.query({
-        query: QUERY2,
-        fetchPolicy: 'network-only',
-      });
+      const { client } = this.props;
+      runQueries(client);
     }).catch((error) => {
       console.error(error);
     });
@@ -122,34 +141,43 @@ AddPostInner.propTypes = {
   client: PropTypes.object.isRequired,
 };
 
-// const AddPost = (withApollo(AddPostInner));
 const AddPost = withStyles(styles)(withApollo(AddPostInner));
 
 class PostsList extends Component {
   renderPost = post => (
-    <Card key={post._id} className="post">
-      <CardContent>
-        <Typography gutterBottom variant="headline" component="h2">
-          {post.title}
-        </Typography>
-        <Typography component="p">
-          {post.body}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button variant="contained" color="primary">
-          <SaveIcon />Change shit
-        </Button>
-      </CardActions>
-    </Card>
+    <div key={post._id}>
+      Title: reddddwwwwwwds{post.title}
+    </div>
+    // <Card key={post._id} className="post">
+    //   <CardContent>
+    //     <Typography gutterBottom variant="headline" component="h2">
+    //       {post.title}
+    //     </Typography>
+    //     <Typography component="p">
+    //       {post.body}
+    //     </Typography>
+    //   </CardContent>
+    //   <CardActions>
+    //     <Button variant="contained" color="primary">
+    //       <SaveIcon />Change shit
+    //     </Button>
+    //   </CardActions>
+    // </Card>
   )
 
-  handleChangeRowsPerPage = () => {
-
-  }
-
-  handleChangePage = () => {
-
+  handleLoadMore = () => {
+    const { fetchMore } = this.props.data;
+    const { variables } = postsQuery;
+    variables.limit += 2;
+    fetchMore({
+      variables,
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return Object.assign({}, prev, {
+          feed: [...prev.posts, ...fetchMoreResult.posts],
+        });
+      },
+    });
   }
 
   render() {
@@ -174,20 +202,9 @@ class PostsList extends Component {
         </Typography>
         <AddPost />
         {data.posts.map(post => this.renderPost(post))}
-        <TablePagination
-          component="div"
-          count={1}
-          rowsPerPage={1}
-          page={1}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
+        <Button variant="contained" color="primary" onClick={this.handleLoadMore}>
+          <AddIcon />Load more
+        </Button>
       </div>
     );
   }
@@ -198,12 +215,9 @@ PostsList.propTypes = {
 };
 
 // export default Home;
-export default withApollo(graphql(QUERY, {
+export default withApollo(graphql(postsQuery.query, {
   options: {
     errorPolicy: 'none',
-    variables: {
-      start: 0,
-      limit: 3,
-    },
+    variables: postsQuery.variables,
   },
 })(PostsList));

@@ -13,7 +13,7 @@ class Home extends Component {
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         </Helmet>
-        <h1>My BC Laws</h1>
+        <h1>Test</h1>
         <PostsList />
         <Link to="/about">About</Link>
       </div>
