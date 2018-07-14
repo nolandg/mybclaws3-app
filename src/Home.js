@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-
-import PostsList from './PostsList';
 import PostsList2 from './PostsList2';
 
 class Home extends Component {

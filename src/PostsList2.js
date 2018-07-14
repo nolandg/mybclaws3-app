@@ -18,10 +18,6 @@ const POSTS_QUERY = gql`
       title
       body
     },
-    users {
-      _id
-      username
-    }
   }
 `;
 
@@ -33,12 +29,14 @@ class PostsList extends Component {
         start: 0,
         limit: 2,
       },
+      increment: 1,
     };
     register(this.refetch);
   }
 
   refetch = () => {
-    if(this.refetch) this.refetch();
+    console.log('fetching with vars: ', this.state.variables);
+    if(this.refetch) this.refetch(this.state.variables);
   }
 
   renderPost = post => (
@@ -47,22 +45,13 @@ class PostsList extends Component {
     </div>
   )
 
-  handleLoadMore = (fetchMore) => {
+  handleLoadMore = () => {
     this.setState(({ variables }) => {
-      variables.start += variables.limit;
+      variables.limit += 1;
       return { variables };
     }, () => {
       const { variables } = this.state;
-
-      fetchMore({
-        variables,
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return Object.assign({}, prev, {
-            posts: [...prev.posts, ...fetchMoreResult.posts],
-          });
-        },
-      });
+      this.refetch(variables);
     });
   }
 
