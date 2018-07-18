@@ -6,17 +6,25 @@ import PropTypes from 'prop-types';
 import { JssProvider } from 'react-jss';
 import { SheetsRegistry } from 'react-jss/lib/jss';
 import { createGenerateClassName } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
 
 const sheetsRegistry = new SheetsRegistry();
 const generateClassName = createGenerateClassName();
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: '#F00' },
+  },
+});
 
 export default class Document extends React.Component {
   static async getInitialProps({ assets, data, renderPage }) {
     const [error, page] = await qatch(renderPage(After => props => (
       <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-        {/* <MuiThemeProvider theme={theme} sheetsManager={new Map()}> */}
-        <After {...props} />
-        {/* </MuiThemeProvider> */}
+        <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
+          <After {...props} />
+        </MuiThemeProvider>
       </JssProvider>
     )));
 

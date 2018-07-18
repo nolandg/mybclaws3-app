@@ -15,7 +15,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 
-import { runQueries } from './queryRegistry';
+import { runQueries } from './strazzle/queryRegistry';
 
 const styles = () => ({
   addPostRoot: {
@@ -42,7 +42,6 @@ class AddPostInner extends Component {
         title: this.state.title,
       }),
     }).then(response => response.json()).then(() => {
-      const { client } = this.props;
       runQueries();
     }).catch((error) => {
       console.error(error);
@@ -84,7 +83,7 @@ AddPostInner.propTypes = {
 };
 
 AddPostInner.propTypes = {
-  client: PropTypes.object.isRequired,
+  // client: PropTypes.object.isRequired,
 };
 
 const AddPost = compose(
