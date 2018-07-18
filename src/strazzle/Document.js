@@ -5,24 +5,19 @@ import qatch from 'await-to-js';
 import PropTypes from 'prop-types';
 import { JssProvider } from 'react-jss';
 import { SheetsRegistry } from 'react-jss/lib/jss';
-// import { MuiThemeProvider, createGenerateClassName } from '@material-ui/core/styles';
-import { MuiThemeProvider, createGenerateClassName, createMuiTheme } from '@material-ui/core/styles';
-
-const muiTheme = createMuiTheme({
-  palette: {
-    primary: { main: '#F00' },
-  },
-});
+import { MuiThemeProvider, createGenerateClassName } from '@material-ui/core/styles';
+// import { MuiThemeProvider, createGenerateClassName, createMuiTheme } from '@material-ui/core/styles';
 
 const sheetsRegistry = new SheetsRegistry();
 const sheetsManager = new WeakMap();
 const generateClassName = createGenerateClassName();
 
 export default class Document extends React.Component {
-  static async getInitialProps({ assets, data, renderPage }) {
+  static async getInitialProps({ assets, data, renderPage, muiTheme, ctx }) {
+    console.log('333333333333333 ', ctx);
     const [error, page] = await qatch(renderPage(After => props => (
       <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-        <MuiThemeProvider theme={muiTheme} sheetsManager={sheetsManager}>
+        <MuiThemeProvider sheetsManager={sheetsManager} theme={muiTheme}>
           <After {...props} />
         </MuiThemeProvider>
       </JssProvider>
