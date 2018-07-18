@@ -8,6 +8,8 @@ const gqlError = (error) => {
     if(e.path && e.path.length) {
       obj.message += ` in "${e.path[0]}"`;
     }
+  }else if(error.message) {
+    obj.message = error.message;
   }else{
     obj.message = 'Unknown';
   }

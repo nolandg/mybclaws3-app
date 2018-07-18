@@ -1,77 +1,23 @@
 import React, { Component } from 'react';
-import { compose, graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import AddPost from './AddPost';
+import withReactiveQuery from './withReactiveQuery';
 
-import { register } from './queryRegistry';
 import gqlError from './gqlError';
-
 
 const POSTS_QUERY = gql`
   query Posts($start: Int, $limit: Int){
     posts(start: $start, limit: $limit) {
       _id
-      title
+      titlee
       body
     },
   }
 `;
-
-const withRefetch = function (WrappedComponent, queryVariables) {
-  class withRefetchClass extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        variables: queryVariables,
-      };
-      register(this.refetch);
-    }
-
-    refetch = () => {
-      this.props.data.refetch(this.state.variables);
-    }
-
-    setVariables = (func, cb) => {
-      if(typeof func !== 'function') {
-        throw Error('You must pass a function to setVariables(). See React functional setState() for details');
-      }
-      this.setState(state => ({ variables: func(state.variables) }), () => {
-        if(typeof cb === 'function') cb();
-        this.refetch();
-      });
-    }
-
-    getVariables = () => this.state.variables
-
-    render() {
-      return <WrappedComponent {...this.props} setVariables={this.setVariables} getVariables={this.getVariables} />;
-    }
-  }
-  withRefetchClass.propTypes = {
-    data: PropTypes.object.isRequired,
-  };
-
-  return withRefetchClass;
-};
-
-
-function withReactiveQuery(query, queryVariables, graphqlOptions) {
-  const defaultOptions = {
-    errorPolicy: 'none',
-    variables: queryVariables,
-  };
-  const options = { ...defaultOptions, ...graphqlOptions };
-  const config = {
-    options,
-  };
-
-  return WrappedComponent => graphql(query, config)(withRefetch(WrappedComponent, queryVariables));
-}
-
 
 class PostsList extends Component {
   renderPost = post => (
@@ -91,10 +37,9 @@ class PostsList extends Component {
       return 'Waiting for data...';
     }
     if(error) {
-      console.error('Error getting data in component: ', error);
       return (
         <div>
-          Error: {gqlError(error).message}
+          Error: {error.message}
         </div>
       );
     }
@@ -127,4 +72,3 @@ PostsList.defaultProps = {
 };
 
 export default withReactiveQuery(POSTS_QUERY, { start: 0, limit: 3 })(PostsList);
-// export default graphql(POSTS_QUERY, { options: { variables: { start: 0, limit: 3 } } })(withRefetch(PostsList));
