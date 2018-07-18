@@ -10,67 +10,68 @@ import Youch from 'youch';
 
 import createApolloClient from './createApolloClient';
 import Document from './Document';
-import routes from '../routes';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
-console.log(process.env.RAZZLE_PUBLIC_DIR);
-console.log(process.env.RAZZLE_ASSETS_MANIFEST);
+function createServerApp({ routes, muiTheme }) {
+  const server = express();
+  server
+    .disable('x-powered-by')
+    .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
+    .get('/*', async (req, res) => {
+      const client = createApolloClient({ ssrMode: true });
 
-const server = express();
-server
-  .disable('x-powered-by')
-  .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', async (req, res) => {
-    const client = createApolloClient({ ssrMode: true });
+      const customRenderer = async (node) => {
+        const App = <ApolloProvider client={client}>{node}</ApolloProvider>;
 
-    const customRenderer = async (node) => {
-      const App = <ApolloProvider client={client}>{node}</ApolloProvider>;
+        const [treeError] = await qatch(getDataFromTree(App));
+        if(treeError) {
+          let errorStr;
+          if(treeError instanceof Error) errorStr = treeError.stack;
+          else errorStr = stringifySafe(treeError, null, 2);
+          console.error(chalk.yellow('------------ Error getting data from tree: -----------------'));
+          console.error(chalk.yellow(errorStr));
+          console.error(chalk.yellow('------------------------------------------------------------'));
 
-      const [treeError] = await qatch(getDataFromTree(App));
-      if(treeError) {
-        let errorStr;
-        if(treeError instanceof Error) errorStr = treeError.stack;
-        else errorStr = stringifySafe(treeError, null, 2);
-        console.error(chalk.yellow('------------ Error getting data from tree: -----------------'));
-        console.error(chalk.yellow(errorStr));
-        console.error(chalk.yellow('------------------------------------------------------------'));
+          // ToDo: Decide if error is fatal
+          const fatal = false;
+          if(fatal) throw treeError;
+        }
 
-        // ToDo: Decide if error is fatal
-        const fatal = false;
-        if(fatal) throw treeError;
-      }
+        const initialApolloState = client.extract();
+        const html = renderToString(App);
+        return { html, initialApolloState, error: treeError };
+      };
 
-      const initialApolloState = client.extract();
-      const html = renderToString(App);
-      return { html, initialApolloState, error: treeError };
-    };
-
-    try {
-      const html = await render({
-        req,
-        res,
-        routes,
-        assets,
-        customRenderer,
-        document: Document,
-      });
-      res.send(html);
-    } catch (error) {
-      const youch = new Youch(error, req);
-
-      youch
-        .toHTML()
-        .then((html) => {
-          res.send(html);
+      try {
+        const html = await render({
+          req,
+          res,
+          routes,
+          assets,
+          customRenderer,
+          document: Document,
         });
+        res.send(html);
+      } catch (error) {
+        const youch = new Youch(error, req);
 
-      let errorStr;
-      if(error instanceof Error) errorStr = error.stack;
-      else errorStr = stringifySafe(error, null, 2);
-      console.log(chalk.red('------------------------------ Error server rendering page ------------------------------'));
-      console.log(chalk.red(errorStr));
-      console.log(chalk.red('-----------------------------------------------------------------------------------------'));
-    }
-  });
-export default server;
+        youch
+          .toHTML()
+          .then((html) => {
+            res.send(html);
+          });
+
+        let errorStr;
+        if(error instanceof Error) errorStr = error.stack;
+        else errorStr = stringifySafe(error, null, 2);
+        console.log(chalk.red('------------------------------ Error server rendering page ------------------------------'));
+        console.log(chalk.red(errorStr));
+        console.log(chalk.red('-----------------------------------------------------------------------------------------'));
+      }
+    });
+
+  return server;
+}
+
+export default createServerApp;

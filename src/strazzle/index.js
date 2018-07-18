@@ -1,26 +1,33 @@
 import http from 'http';
-import app from './server';
+import createServerApp from './server';
 
-const server = http.createServer(app);
+function startServer({ routes, muiTheme }) {
+  const app = createServerApp({ routes, muiTheme });
+  const server = http.createServer(app);
 
-let currentApp = app;
+  let currentApp = app;
 
-server.listen(process.env.PORT || 3000, (error) => {
-  if (error) {
-    console.log(error);
+  server.listen(process.env.PORT || 3000, (error) => {
+    if (error) {
+      console.log(error);
+    }
+
+    console.log('🚀 started');
+  });
+
+  if (module.hot) {
+    console.log('✅  Server-side HMR Enabled!');
+
+    module.hot.accept('./server', () => {
+      console.log('🔁  HMR Reloading `./server`...');
+      server.removeListener('request', currentApp);
+      const newApp = require('./server').default;
+      server.on('request', newApp);
+      currentApp = newApp;
+    });
   }
 
-  console.log('🚀 started');
-});
-
-if (module.hot) {
-  console.log('✅  Server-side HMR Enabled!');
-
-  module.hot.accept('./server', () => {
-    console.log('🔁  HMR Reloading `./server`...');
-    server.removeListener('request', currentApp);
-    const newApp = require('./server').default;
-    server.on('request', newApp);
-    currentApp = newApp;
-  });
+  return server;
 }
+
+export default startServer;
