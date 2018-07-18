@@ -16,8 +16,10 @@ const theme = createMuiTheme({
   },
 });
 
+const sheetsManager = new WeakMap();
+
 ensureReady(routes).then(data => hydrate(
-  <MuiThemeProvider theme={theme}>
+  <MuiThemeProvider sheetsManager={sheetsManager} theme={theme}>
     <ApolloProvider client={client}>
       <BrowserRouter>
         <After data={data} routes={routes} />
