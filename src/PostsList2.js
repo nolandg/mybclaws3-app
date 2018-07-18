@@ -21,18 +21,17 @@ const POSTS_QUERY = gql`
   }
 `;
 
-const withRefetch = function (WrappedComponent) {
+const withRefetch = function (WrappedComponent, queryVariables) {
   class withRefetchClass extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        variables: {},
+        variables: queryVariables,
       };
       register(this.refetch);
     }
 
     refetch = () => {
-      console.log('vars in refetch() ', this.state.variables);
       this.props.data.refetch(this.state.variables);
     }
 
@@ -62,13 +61,15 @@ const withRefetch = function (WrappedComponent) {
 
 function withReactiveQuery(query, queryVariables, graphqlOptions) {
   const defaultOptions = {
-    options: {
-      errorPolicy: 'none',
-      variables: queryVariables,
-    },
+    errorPolicy: 'none',
+    variables: queryVariables,
+  };
+  const options = { ...defaultOptions, ...graphqlOptions };
+  const config = {
+    options,
   };
 
-  return graphql(query, { ...defaultOptions, ...graphqlOptions })(withRefetch);
+  return WrappedComponent => graphql(query, config)(withRefetch(WrappedComponent, queryVariables));
 }
 
 
@@ -80,17 +81,15 @@ class PostsList extends Component {
   )
 
   handleLoadMore = () => {
-    this.props.setVariables(({ start, limit }) => {
-      console.log('vars in handleLoadMore() ', this.arguments);
-
-      return { start, limit: limit + 1 };
-    });
+    this.props.setVariables(({ start, limit }) => ({ start, limit: limit + 10 }));
   }
 
   render() {
-    const { loading, error, posts } = this.props.data;
+    const { error, posts, networkStatus } = this.props.data;
 
-    if(loading) return 'Waiting for data...';
+    if(networkStatus === 1) {
+      return 'Waiting for data...';
+    }
     if(error) {
       console.error('Error getting data in component: ', error);
       return (
@@ -119,17 +118,13 @@ class PostsList extends Component {
 PostsList.propTypes = {
   data: PropTypes.object.isRequired,
   error: PropTypes.object,
-  loading: PropTypes.bool,
+  networkStatus: PropTypes.number,
   setVariables: PropTypes.func.isRequired,
 };
 PostsList.defaultProps = {
-  error: null,
-  loading: true,
+  error: undefined,
+  networkStatus: 1,
 };
 
-// export default withReactiveQuery(POSTS_QUERY, { start: 0, limit: 3 }),
-export default graphql(POSTS_QUERY, { options: { variables: { start: 0, limit: 3 } } })(withRefetch(PostsList));
-// export default withRefetch(graphql(POSTS_QUERY, { variables: { start: 0, limit: 3 } })(PostsList));
-// export default compose(
-//   withReactiveQuery(POSTS_QUERY, { start: 0, limit: 3 }),
-// )(PostsList);
+export default withReactiveQuery(POSTS_QUERY, { start: 0, limit: 3 })(PostsList);
+// export default graphql(POSTS_QUERY, { options: { variables: { start: 0, limit: 3 } } })(withRefetch(PostsList));
