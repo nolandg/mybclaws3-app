@@ -13,8 +13,7 @@ const sheetsManager = new WeakMap();
 const generateClassName = createGenerateClassName();
 
 export default class Document extends React.Component {
-  static async getInitialProps({ assets, data, renderPage, muiTheme, ctx }) {
-    console.log('333333333333333 ', ctx);
+  static async getInitialProps({ assets, data, renderPage, muiTheme }) {
     const [error, page] = await qatch(renderPage(After => props => (
       <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
         <MuiThemeProvider sheetsManager={sheetsManager} theme={muiTheme}>
@@ -40,7 +39,7 @@ export default class Document extends React.Component {
     const htmlAttrs = helmet.htmlAttributes.toComponent();
     const bodyAttrs = helmet.bodyAttributes.toComponent();
     return (
-      <html {...htmlAttrs}>
+      <html {...htmlAttrs} lang="en">
         <head>
           <meta name="Made With Love By: " content="Noland" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />

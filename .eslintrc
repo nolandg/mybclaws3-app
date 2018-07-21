@@ -1,9 +1,11 @@
 {
+  # extends: 'react-app',
   extends: 'eslint-config-airbnb',
   parser: "babel-eslint",
   rules: {
     strict: 0,
     no-unused-vars: 1,
+    jsx-a11y/href-no-hash: 0,
     no-throw-literal: 0,
     func-names: 0,
     import/prefer-default-export: 0,
@@ -19,7 +21,6 @@
     react/jsx-one-expression-per-line: 0,
     no-console: 0,
     import/no-dynamic-require: 0,
-    jsx-a11y/html-has-lang: 0,
     react/no-danger: 0,
     react/prefer-stateless-function: 0,
     no-underscore-dangle: 0,

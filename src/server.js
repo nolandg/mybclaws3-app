@@ -54,7 +54,6 @@ server
         customRenderer,
         document: Document,
         muiTheme,
-        ctx: '$%^&&&^^#########################',
       });
       res.send(html);
     } catch (error) {

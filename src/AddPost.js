@@ -58,7 +58,7 @@ class AddPostInner extends Component {
     return (
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="title">Add Post</Typography>
+          <Typography variant="title">Add Postee</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.addPostRoot}>
           <TextField
