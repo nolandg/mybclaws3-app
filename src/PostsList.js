@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { withReactiveQuery } from 'strazzle';
 import AddPost from './AddPost';
-
-import withReactiveQuery from './strazzle/withReactiveQuery';
 
 const POSTS_QUERY = gql`
   query Posts($start: Int, $limit: Int){

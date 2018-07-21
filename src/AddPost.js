@@ -15,7 +15,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 
-import { runQueries } from './strazzle/queryRegistry';
+import { queryManager } from 'strazzle';
 
 const styles = () => ({
   addPostRoot: {
@@ -42,7 +42,7 @@ class AddPostInner extends Component {
         title: this.state.title,
       }),
     }).then(response => response.json()).then(() => {
-      runQueries();
+      queryManager.runQueries();
     }).catch((error) => {
       console.error(error);
     });

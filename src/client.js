@@ -6,7 +6,7 @@ import { ApolloProvider } from 'react-apollo';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 // import { ensureReady, After } from '../../after';
 
-import createApolloClient from './strazzle/createApolloClient';
+import { createApolloClient } from 'strazzle';
 
 import muiTheme from './styles/muiTheme';
 import routes from './routes';

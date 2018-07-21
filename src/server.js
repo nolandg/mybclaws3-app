@@ -8,11 +8,17 @@ import chalk from 'chalk';
 import qatch from 'await-to-js';
 import Youch from 'youch';
 
-import createApolloClient from './strazzle/createApolloClient';
-import Document from './strazzle/Document';
+// import { createApolloClient, Document } from 'strazzle';
+import strazzle from 'strazzle';
 
 import muiTheme from './styles/muiTheme';
 import routes from './routes';
+
+
+console.log(strazzle);
+
+const createApolloClient = strazzle.createApolloClient;
+const Document = strazzle.Document;
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
