@@ -8,10 +8,11 @@ const server = express();
 configureServerApp(server, {
   muiTheme,
   routes,
+  apolloClientOptions: {
+    uri: 'http://localhost:1337/graphql',
+  },
   razzlePublicDir: process.env.RAZZLE_PUBLIC_DIR,
   razzleAssetsManifestPath: process.env.RAZZLE_ASSETS_MANIFEST,
 });
-
-server.disable('x-powered-by');
 
 export default server;
