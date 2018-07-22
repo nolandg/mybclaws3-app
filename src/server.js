@@ -1,83 +1,17 @@
-import React from 'react';
 import express from 'express';
-import { render } from '@jaredpalmer/after';
-import { renderToString } from 'react-dom/server';
-import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import stringifySafe from 'json-stringify-safe';
-import chalk from 'chalk';
-import qatch from 'await-to-js';
-import Youch from 'youch';
-
-// import { createApolloClient, Document } from 'strazzle';
-import strazzle from 'strazzle';
-
-import muiTheme from './styles/muiTheme';
+import { configureServerApp } from 'strazzle';
 import routes from './routes';
-
-
-console.log(strazzle);
-
-const createApolloClient = strazzle.createApolloClient;
-const Document = strazzle.Document;
-
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+import muiTheme from './styles/muiTheme';
 
 const server = express();
-server
-  .disable('x-powered-by')
-  .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', async (req, res) => {
-    const client = createApolloClient({ ssrMode: true });
 
-    const customRenderer = async (node) => {
-      const App = <ApolloProvider client={client}>{node}</ApolloProvider>;
+configureServerApp(server, {
+  muiTheme,
+  routes,
+  razzlePublicDir: process.env.RAZZLE_PUBLIC_DIR,
+  razzleAssetsManifestPath: process.env.RAZZLE_ASSETS_MANIFEST,
+});
 
-      const [treeError] = await qatch(getDataFromTree(App));
-      if(treeError) {
-        let errorStr;
-        if(treeError instanceof Error) errorStr = treeError.stack;
-        else errorStr = stringifySafe(treeError, null, 2);
-        console.error(chalk.yellow('------------ Error getting data from tree: -----------------'));
-        console.error(chalk.yellow(errorStr));
-        console.error(chalk.yellow('------------------------------------------------------------'));
-
-        // ToDo: Decide if error is fatal
-        const fatal = false;
-        if(fatal) throw treeError;
-      }
-
-      const initialApolloState = client.extract();
-      const html = renderToString(App);
-      return { html, initialApolloState, error: treeError };
-    };
-
-    try {
-      const html = await render({
-        req,
-        res,
-        routes,
-        assets,
-        customRenderer,
-        document: Document,
-        muiTheme,
-      });
-      res.send(html);
-    } catch (error) {
-      const youch = new Youch(error, req);
-
-      youch
-        .toHTML()
-        .then((html) => {
-          res.send(html);
-        });
-
-      let errorStr;
-      if(error instanceof Error) errorStr = error.stack;
-      else errorStr = stringifySafe(error, null, 2);
-      console.log(chalk.red('------------------------------ Error server rendering page ------------------------------'));
-      console.log(chalk.red(errorStr));
-      console.log(chalk.red('-----------------------------------------------------------------------------------------'));
-    }
-  });
+server.disable('x-powered-by');
 
 export default server;

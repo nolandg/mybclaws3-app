@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { ensureReady, After } from '@jaredpalmer/after';
 import { ApolloProvider } from 'react-apollo';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-// import { ensureReady, After } from '../../after';
 
 import { createApolloClient } from 'strazzle';
 
