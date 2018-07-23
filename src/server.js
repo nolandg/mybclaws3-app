@@ -1,15 +1,15 @@
-import express from 'express';
-import { configureServerApp } from 'strazzle';
+import { serverApp } from 'strazzle';
 import routes from './routes';
 import muiTheme from './styles/muiTheme';
 
-const server = express();
-
-configureServerApp(server, {
+const server = serverApp.create({
   muiTheme,
   routes,
   apolloClientOptions: {
     uri: 'http://localhost:1337/graphql',
+  },
+  appHeaders: {
+    'Made-With-Love-and-Espresso-By': 'Noland Germain',
   },
   razzlePublicDir: process.env.RAZZLE_PUBLIC_DIR,
   razzleAssetsManifestPath: process.env.RAZZLE_ASSETS_MANIFEST,
