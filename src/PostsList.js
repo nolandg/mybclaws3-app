@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { withReactiveQuery } from 'strazzle';
+import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 import AddPost from './AddPost';
 
 const POSTS_QUERY = gql`

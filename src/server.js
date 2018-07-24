@@ -1,4 +1,4 @@
-import { serverApp } from 'strazzle';
+import { serverApp } from 'lapki'; // eslint-disable-line
 import routes from './routes';
 import muiTheme from './styles/muiTheme';
 

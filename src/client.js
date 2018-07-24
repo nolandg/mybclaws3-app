@@ -5,7 +5,7 @@ import { ensureReady, After } from '@jaredpalmer/after';
 import { ApolloProvider } from 'react-apollo';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
-import { createApolloClient } from 'strazzle';
+import { createApolloClient } from 'lapki'; // eslint-disable-line
 
 import muiTheme from './styles/muiTheme';
 import routes from './routes';

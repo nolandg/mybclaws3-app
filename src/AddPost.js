@@ -1,21 +1,16 @@
 import React, { Component } from 'react';
-import { withApollo, compose } from 'react-apollo';
-import fetch from 'isomorphic-fetch';
+import { compose } from 'react-apollo';
 import PropTypes from 'prop-types';
 import SaveIcon from '@material-ui/icons/Save';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-// import CardContent from '@material-ui/core/CardContent';
-// import Card from '@material-ui/core/Card';
-// import CardActions from '@material-ui/core/CardActions';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
-
-import { queryManager } from 'strazzle';
+import { TextField } from './FormFields';
+import withMutation from './withMutation';
 
 const styles = () => ({
   addPostRoot: {
@@ -28,32 +23,12 @@ const styles = () => ({
 });
 
 class AddPostInner extends Component {
-  state = {
-    title: 'i am title',
-  }
-
   handleAddPostClick = () => {
-    fetch('http://localhost:1337/post', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: this.state.title,
-      }),
-    }).then(response => response.json()).then(() => {
-      queryManager.runQueries();
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-
-  handleTitleChange = (e) => {
-    this.setState({ title: e.target.value });
+    this.props.save();
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, fieldProps } = this.props;
 
     return (
       <ExpansionPanel>
@@ -62,12 +37,18 @@ class AddPostInner extends Component {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.addPostRoot}>
           <TextField
-            onChange={this.handleTitleChange}
-            value={this.state.title}
             name="title"
             label="Title"
             helperText="Enter a descriptive title for this post"
             margin="normal"
+            fieldProps={fieldProps}
+          />
+          <TextField
+            name="name"
+            label="Name"
+            helperText="Enter a descriptive NAME for this post"
+            margin="normal"
+            fieldProps={fieldProps}
           />
           <br />
           <Button onClick={this.handleAddPostClick} className={classes.addPostButton} variant="contained" color="primary">
@@ -80,14 +61,16 @@ class AddPostInner extends Component {
 }
 AddPostInner.propTypes = {
   classes: PropTypes.object.isRequired,
+  fieldProps: PropTypes.object.isRequired,
+  save: PropTypes.func.isRequired,
 };
 
 AddPostInner.propTypes = {
-  // client: PropTypes.object.isRequired,
+
 };
 
 const AddPost = compose(
-  withApollo,
+  withMutation,
   withStyles(styles),
 )(AddPostInner);
 
