@@ -6,6 +6,12 @@ import PropTypes from 'prop-types';
 /**
  * Base form field class HOC
  */
+const formFieldStyles = {
+  errorHelpText: {
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+  },
+};
 export const formField = function (WrappedComponent) {
   class formFieldClass extends Component {
     onChange = (e) => {
@@ -14,26 +20,47 @@ export const formField = function (WrappedComponent) {
     }
 
     render() {
-      const { fieldProps, name, defaultValue, ...rest } = this.props;
+      const { fieldProps, name, defaultValue, helperText, classes, ...rest } = this.props;
       const defaults = {
         value: typeof defaultValue !== 'undefined' ? defaultValue : '',
         error: false,
       };
       const theseFieldProps = { ...defaults, ...fieldProps.fields[name] };
+      const { error } = theseFieldProps;
 
-      return <WrappedComponent onChange={this.onChange} {...theseFieldProps} {...rest} />;
+      const helperTextWithError = (
+        <span>
+          <span className="helpText">{helperText}</span>
+          {error
+            ? <span className={classes.errorHelpText}><br /><br />{error}</span>
+            : null}
+        </span>
+      );
+
+      return (
+        <WrappedComponent
+          onChange={this.onChange}
+          helperText={helperTextWithError}
+          error={!!error}
+          {...theseFieldProps}
+          {...rest}
+        />
+      );
     }
   }
   formFieldClass.propTypes = {
     fieldProps: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
     defaultValue: PropTypes.any,
+    helperText: PropTypes.node,
+    classes: PropTypes.object.isRequired,
   };
   formFieldClass.defaultProps = {
     defaultValue: undefined,
+    helperText: '',
   };
 
-  return formFieldClass;
+  return withStyles(formFieldStyles)(formFieldClass);
 };
 
 /**
@@ -45,26 +72,9 @@ const textFieldStyles = {
     fontWeight: 'bold',
   },
 };
-const TextFieldUnwrapped = ({ error, helperText, classes, ...rest }) => {
-  const errorMessage = error;
-  error = !!error;
-  const helperTextWithError = (
-    <span>
-      <span className="helpText">{helperText}</span>
-      {error
-        ? <span className={classes.errorHelpText}><br /><br />{errorMessage}</span>
-        : null}
-    </span>
-  );
-  return <MuiTextField error={error} helperText={helperTextWithError} {...rest} />;
+const TextFieldUnstyled = ({ ...rest }) => <MuiTextField {...rest} />;
+TextFieldUnstyled.propTypes = {
 };
-TextFieldUnwrapped.propTypes = {
-  error: PropTypes.any,
-  helperText: PropTypes.string,
-  classes: PropTypes.object.isRequired,
+TextFieldUnstyled.defaultProps = {
 };
-TextFieldUnwrapped.defaultProps = {
-  error: undefined,
-  helperText: undefined,
-};
-export const TextField = withStyles(textFieldStyles)(formField(TextFieldUnwrapped));
+export const TextField = withStyles(textFieldStyles)(formField(TextFieldUnstyled));

@@ -39,7 +39,6 @@
     "react-jss": "^8.6.1",
     "react-router-dom": "^4.2.2",
     "resolve-url-loader": "^2.3.0",
-    "youch": "^2.0.8",
     "yup": "^0.26.0"
   },
   "devDependencies": {
