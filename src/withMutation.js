@@ -5,7 +5,7 @@ import deepGet from 'lodash.get';
 import deepSet from 'lodash.set';
 import { queryManager } from 'lapki'; // eslint-disable-line import/no-extraneous-dependencies
 
-const withMutation = function (WrappedComponent) {
+const withMutation = function (WrappedComponent, document) {
   class withMutationClass extends Component {
     constructor(props) {
       super(props);
@@ -139,6 +139,8 @@ const withMutation = function (WrappedComponent) {
         onChange: this.handleFieldValueChange,
         fields: this.state.fields,
       };
+
+      console.log(document);
 
       return <WrappedComponent save={this.save} fieldProps={fieldProps} errors={errors} {...rest} />;
     }
