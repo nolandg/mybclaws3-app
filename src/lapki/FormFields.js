@@ -26,7 +26,6 @@ export const formField = function (WrappedComponent) {
         error: false,
       };
       const theseFieldProps = { ...defaults, ...fieldProps.fields[name] };
-      delete theseFieldProps.touched;
       const { error } = theseFieldProps;
 
       const helperTextWithError = (
@@ -37,6 +36,9 @@ export const formField = function (WrappedComponent) {
             : null}
         </span>
       );
+
+      delete theseFieldProps.touched;
+      delete theseFieldProps.error;
 
       return (
         <WrappedComponent

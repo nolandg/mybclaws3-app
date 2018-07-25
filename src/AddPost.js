@@ -9,7 +9,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
-import { TextField } from './FormFields';
+import { TextField } from './lapki/FormFields';
 import withMutation from './lapki/withMutation';
 
 const styles = () => ({

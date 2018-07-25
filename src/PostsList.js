@@ -8,7 +8,7 @@ import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 
 import AddPost from './AddPost';
 import MutationModal from './lapki/MutationModal';
-import { TextField } from './FormFields';
+import { TextField } from './lapki/FormFields';
 
 const POSTS_QUERY = gql`
   query Posts($start: Int, $limit: Int){
