@@ -70,7 +70,7 @@ AddPostInner.propTypes = {
 };
 
 const AddPost = compose(
-  withMutation('hello there!!'),
+  withMutation('post'),
   withStyles(styles),
 )(AddPostInner);
 

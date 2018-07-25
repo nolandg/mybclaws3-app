@@ -26,6 +26,7 @@ export const formField = function (WrappedComponent) {
         error: false,
       };
       const theseFieldProps = { ...defaults, ...fieldProps.fields[name] };
+      delete theseFieldProps.touched;
       const { error } = theseFieldProps;
 
       const helperTextWithError = (
@@ -72,9 +73,14 @@ const textFieldStyles = {
     fontWeight: 'bold',
   },
 };
-const TextFieldUnstyled = ({ ...rest }) => <MuiTextField {...rest} />;
+const TextFieldUnstyled = ({ value, ...rest }) => {
+  if(!value) value = '';
+  return <MuiTextField value={value} {...rest} />;
+};
 TextFieldUnstyled.propTypes = {
+  value: PropTypes.any,
 };
 TextFieldUnstyled.defaultProps = {
+  value: '',
 };
 export const TextField = withStyles(textFieldStyles)(formField(TextFieldUnstyled));
