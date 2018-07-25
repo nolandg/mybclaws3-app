@@ -32,27 +32,15 @@ const styles = theme => ({
 });
 
 class MutationModal extends React.Component {
-  state = {
-    open: false,
-  };
-
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
   render() {
-    const { classes, fieldProps, render, document, save } = this.props;
+    const { classes, fieldProps, render, document, save, open, onClose, onOpen } = this.props;
 
     return (
       <div>
-        <Button onClick={this.handleOpen}>Edit</Button>
+        <Button onClick={onOpen}>Edit</Button>
         <Modal
-          open={this.state.open}
-          onClose={this.handleClose}
+          open={open}
+          onClose={onClose}
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="title" id="modal-title">
@@ -80,7 +68,9 @@ MutationModal.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldProps: PropTypes.object.isRequired,
   document: PropTypes.object,
-  // documentType: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  onOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   render: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
 };
@@ -88,17 +78,46 @@ MutationModal.defaultProps = {
   document: null,
 };
 
-export default function ExportComponent({ document, documentType, ...rest }) {
-  const ComposedComponent = compose(
-    withStyles(styles),
-    withMutation(documentType, document),
-  )(MutationModal);
-  return <ComposedComponent {...rest} />;
+export default class MutationModalWrapper extends React.Component {
+  state = {
+    open: false,
+  };
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleMutationSuccess = () => {
+    this.handleClose();
+    console.log('we are done!!');
+  };
+
+  render() {
+    const { document, documentType, ...rest } = this.props;
+    const MutationModalWithHOCs = compose(
+      withStyles(styles),
+      withMutation(documentType, document),
+    )(MutationModal);
+
+    return (
+      <MutationModalWithHOCs
+        open={this.state.open}
+        onOpen={this.handleOpen}
+        onClose={this.handleClose}
+        onMutationSuccess={this.handleMutationSuccess}
+        {...rest}
+      />
+    );
+  }
 }
-ExportComponent.propTypes = {
+MutationModalWrapper.propTypes = {
   document: PropTypes.object,
   documentType: PropTypes.string.isRequired,
 };
-ExportComponent.defaultProps = {
+MutationModalWrapper.defaultProps = {
   document: null,
 };
