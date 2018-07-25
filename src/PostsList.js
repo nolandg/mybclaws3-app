@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 
 import AddPost from './AddPost';
-import MutationModal from './MutationModal';
+import MutationModal from './lapki/MutationModal';
 import { TextField } from './FormFields';
 
 const POSTS_QUERY = gql`

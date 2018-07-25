@@ -10,7 +10,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 import { TextField } from './FormFields';
-import withMutation from './withMutation';
+import withMutation from './lapki/withMutation';
 
 const styles = () => ({
   addPostRoot: {
