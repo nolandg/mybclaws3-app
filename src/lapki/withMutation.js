@@ -10,6 +10,11 @@ import connectionManager from './graphqlConnectionManager';
 export default function () {
   return function withMutation(WrappedComponent) {
     class withMutationClass extends Component {
+      callbacks = {
+        onMutationSuccess: null,
+        onMutationError: null,
+      }
+
       constructor(props) {
         super(props);
         this.state = {
@@ -162,12 +167,12 @@ export default function () {
       handleMutationSuccess = (doc) => {
         console.log('Successfully saved document ');
         queryManager.refetchQueries();
-        if(this.props.onMutationSuccess) this.props.onMutationSuccess(doc);
+        if(this.callbacks.onMutationSuccess) this.callbacks.onMutationSuccess(doc);
       }
 
       handleMutationError = (error) => {
         console.error('Mutation Error: ', error);
-        if(this.props.onMutationError) this.props.onMutationError(error);
+        if(this.callbacks.onMutationError) this.callbacks.onMutationError(error);
       }
 
       mutate = (doc, operation) => {
@@ -221,6 +226,10 @@ export default function () {
           });
       }
 
+      registerCallbacks = (callbacks) => {
+        this.callbacks = { ...this.callbacks, ...callbacks };
+      }
+
       render() {
         const { ...rest } = this.props;
         const errors = this.extractErrorsFromFields();
@@ -229,18 +238,22 @@ export default function () {
           fields: this.state.fields,
         };
 
-        return <WrappedComponent save={this.save} fieldProps={fieldProps} errors={errors} {...rest} />;
+        return (
+          <WrappedComponent
+            save={this.save}
+            fieldProps={fieldProps}
+            errors={errors}
+            registerCallbacks={this.registerCallbacks}
+            {...rest}
+          />
+        );
       }
     }
     withMutationClass.propTypes = {
-      onMutationSuccess: PropTypes.func,
-      onMutationError: PropTypes.func,
       document: PropTypes.object,
       documentType: PropTypes.string.isRequired,
     };
     withMutationClass.defaultProps = {
-      onMutationSuccess: null,
-      onMutationError: null,
       document: undefined,
     };
 

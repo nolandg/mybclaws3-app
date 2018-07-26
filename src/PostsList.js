@@ -99,20 +99,6 @@ EditModal.propTypes = {
   documentType: PropTypes.string.isRequired,
 };
 
-class SimpleComponent extends Component {
-  constructor(props) {
-    super(props);
-    console.log('SimpleComponent constructor');
-  }
-
-  render() {
-    return <div>Title: {this.props.document.title}</div>;
-  }
-}
-SimpleComponent.propTypes = {
-  document: PropTypes.object.isRequired,
-};
-
 class PostsList extends Component {
   constructor(props) {
     super(props);
@@ -120,8 +106,8 @@ class PostsList extends Component {
   }
 
   renderPost = post => (
-    <div key={`${post._id}_oooooooo`}>
-      <SimpleComponent document={post} key={post._id} />
+    <div key={post._id}>
+      Title: {post.title}<br />
       <EditModal document={post} documentType="post" />
     </div>
   )

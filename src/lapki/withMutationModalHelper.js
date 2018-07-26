@@ -17,6 +17,10 @@ function withMutationModalHelper(WrappedComponent) {
       this.state = {
         modalOpen: false,
       };
+
+      props.registerCallbacks({
+        onMutationSuccess: this.handleClose,
+      });
     }
 
     handleOpen = () => {
@@ -40,7 +44,6 @@ function withMutationModalHelper(WrappedComponent) {
         <WrappedComponent
           handleOpen={this.handleOpen}
           handleClose={this.handleClose}
-          onMutationSuccess={this.handleMutationSuccess}
           modalOpen={this.state.modalOpen}
           {...rest}
         />
@@ -50,9 +53,10 @@ function withMutationModalHelper(WrappedComponent) {
   withMutationModalHelperClass.propTypes = {
     document: PropTypes.object,
     documentType: PropTypes.string.isRequired,
+    registerCallbacks: PropTypes.func.isRequired,
   };
   withMutationModalHelperClass.defaultProps = {
-    document: null,
+    document: undefined,
   };
 
   return withMutationModalHelperClass;
