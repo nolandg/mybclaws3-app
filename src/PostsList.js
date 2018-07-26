@@ -13,10 +13,8 @@ import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 import { withStyles } from '@material-ui/core/styles';
 
 import AddPost from './AddPost';
-import MutationModal from './lapki/MutationModal';
 import { TextField } from './lapki/FormFields';
 import withMutationModalHelperClass from './lapki/withMutationModalHelper';
-import withMutation from './lapki/withMutation';
 
 const POSTS_QUERY = gql`
   query Posts($start: Int, $limit: Int){
@@ -47,13 +45,19 @@ const modalStyles = theme => ({
 });
 
 class EditModalNoHOCs extends Component {
+  constructor(props) {
+    super(props);
+    console.log('EditModalNoHOCs constructor');
+  }
+
   render() {
-    const { open, handleClose, handleOpen, fieldProps, classes, save } = this.props;
+    const { modalOpen, handleClose, handleOpen, fieldProps, classes, save } = this.props;
+
     return (
       <div>
-        <Button onClick={handleOpen}><EditIcon />Edit</Button>
+        <Button onClick={handleOpen} variant="contained" color="secondary"><EditIcon />Edit</Button>
         <Modal
-          open={open}
+          open={modalOpen}
           onClose={handleClose}
         >
           <div style={modalStyle} className={classes.paper}>
@@ -77,7 +81,7 @@ class EditModalNoHOCs extends Component {
   }
 }
 EditModalNoHOCs.propTypes = {
-  open: PropTypes.bool.isRequired,
+  modalOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleOpen: PropTypes.func.isRequired,
   fieldProps: PropTypes.object.isRequired,
@@ -85,36 +89,60 @@ EditModalNoHOCs.propTypes = {
   save: PropTypes.func.isRequired,
 };
 const EditModal = ({ document, documentType, ...rest }) => {
-  const C = compose(
-    withStyles(modalStyles),
-    withMutation(documentType, document),
-    withMutationModalHelperClass,
-  )(EditModalNoHOCs);
-  return <C document={document} documentType={documentType} {...rest} />;
+  // const C = compose(
+  //   withStyles(modalStyles),
+  //   withMutationModalHelperClass(documentType, document),
+  // )(EditModalNoHOCs);
+  // return <C document={document} documentType={documentType} {...rest} />;
+  if(document === 234) return 234;
+  return <SimpleComponent2 document={document} />;
 };
 EditModal.propTypes = {
   document: PropTypes.object.isRequired,
   documentType: PropTypes.string.isRequired,
 };
 
+class SimpleComponent2 extends Component {
+  constructor(props) {
+    super(props);
+    console.log('SimpleComponent2 constructor');
+  }
+
+  render() {
+    return <div>Title: {this.props.document.title}</div>;
+  }
+}
+SimpleComponent2.propTypes = {
+  document: PropTypes.object.isRequired,
+};
+
+class SimpleComponent extends Component {
+  constructor(props) {
+    super(props);
+    console.log('SimpleComponent constructor');
+  }
+
+  render() {
+    return <div>Title: {this.props.document.title}</div>;
+  }
+}
+SimpleComponent.propTypes = {
+  document: PropTypes.object.isRequired,
+};
+
 class PostsList extends Component {
+  constructor(props) {
+    super(props);
+    console.log('PostsList constructor');
+  }
+
   renderPost = post => (
-    <div key={post._id}>
+    <div key={`${post._id}_oooooooo`}>
+      <SimpleComponent document={post} key={post._id} />
+      <div key={`${post._id}_ppppppppoop`}>
       Title: {post.title}
-      {/* <MutationModal
-        document={post}
-        documentType="post"
-        render={({ fieldProps }) => (
-          <TextField
-            name="title"
-            label="Title"
-            helperText="Enter a descriptive title for this post"
-            margin="normal"
-            fieldProps={fieldProps}
-          />
-        )}
-      /> */}
-      <EditModal document={post} documentType="post" />
+        <EditModal document={post} documentType="post" />
+      </div>
     </div>
   )
 

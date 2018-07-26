@@ -158,14 +158,14 @@ export default function (documentType, document) {
       }
 
       handleMutationSuccess = (doc) => {
-        console.log('Successfully save document: ', doc);
+        console.log('Successfully saved document ');
         queryManager.refetchQueries();
         if(this.props.onMutationSuccess) this.props.onMutationSuccess(doc);
       }
 
       handleMutationError = (error) => {
         console.error('Mutation Error: ', error);
-        if(this.props.onMutationSuccess) this.props.onMutationError(error);
+        if(this.props.onMutationError) this.props.onMutationError(error);
       }
 
       mutate = (doc, operation) => {

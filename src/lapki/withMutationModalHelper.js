@@ -8,20 +8,24 @@ import PropTypes from 'prop-types';
 // import Divider from '@material-ui/core/Divider';
 // import { compose } from 'react-apollo';
 
-// import withMutation from './withMutation';
+import withMutation from './withMutation';
 
 function withMutationModalHelper(WrappedComponent) {
   class withMutationModalHelperClass extends React.Component {
-    state = {
-      open: false,
-    };
+    constructor(props) {
+      super(props);
+      this.state = {
+        modalOpen: false,
+      };
+    }
 
     handleOpen = () => {
-      this.setState({ open: true });
+      this.setState({ modalOpen: true });
     };
 
     handleClose = () => {
-      this.setState({ open: false });
+      console.log('i am closing now');
+      this.setState({ modalOpen: false });
     };
 
     handleMutationSuccess = () => {
@@ -37,7 +41,7 @@ function withMutationModalHelper(WrappedComponent) {
           handleOpen={this.handleOpen}
           handleClose={this.handleClose}
           onMutationSuccess={this.handleMutationSuccess}
-          open={this.state.open}
+          modalOpen={this.state.modalOpen}
           {...rest}
         />
       );
@@ -54,4 +58,8 @@ function withMutationModalHelper(WrappedComponent) {
   return withMutationModalHelperClass;
 }
 
-export default withMutationModalHelper;
+function OMG(documentType, document) {
+  return WrappedComponent => withMutation(documentType, document)(withMutationModalHelper(WrappedComponent));
+}
+
+export default OMG;
