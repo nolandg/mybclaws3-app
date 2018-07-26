@@ -58,8 +58,6 @@ function withMutationModalHelper(WrappedComponent) {
   return withMutationModalHelperClass;
 }
 
-function OMG(documentType, document) {
-  return WrappedComponent => withMutation(documentType, document)(withMutationModalHelper(WrappedComponent));
-}
+const withMutationModalHelperWithHOCs = WrappedComponent => withMutation()(withMutationModalHelper(WrappedComponent));
 
-export default OMG;
+export default withMutationModalHelperWithHOCs;

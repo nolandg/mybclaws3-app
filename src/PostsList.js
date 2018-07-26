@@ -89,37 +89,11 @@ EditModalNoHOCs.propTypes = {
   save: PropTypes.func.isRequired,
 };
 
+const EditModal = compose(
+  withStyles(modalStyles),
+  withMutationModalHelperClass,
+)(EditModalNoHOCs);
 
-function withSimple(WrappedComponent) {
-  return props => <WrappedComponent {...props} />;
-}
-
-class SimpleComponent2 extends Component {
-  constructor(props) {
-    super(props);
-    console.log('SimpleComponent2 constructor');
-  }
-
-  render() {
-    return <div>Title: {this.props.document.title}</div>;
-  }
-}
-SimpleComponent2.propTypes = {
-  document: PropTypes.object.isRequired,
-};
-
-const EditModal = ({ document, documentType, ...rest }) => {
-  // const C = compose(
-  //   withStyles(modalStyles),
-  //   withMutationModalHelperClass(documentType, document),
-  // )(EditModalNoHOCs);
-  // return <C document={document} documentType={documentType} {...rest} />;
-  if(document === 234) return 234;
-  const C = compose(
-    withSimple,
-  )(SimpleComponent2);
-  return <C document={document} documentType={documentType} />;
-};
 EditModal.propTypes = {
   document: PropTypes.object.isRequired,
   documentType: PropTypes.string.isRequired,
@@ -176,7 +150,7 @@ class PostsList extends Component {
         <Typography variant="display3" gutterBottom>
           Possssssssssss
         </Typography>
-        <AddPost />
+        <AddPost documentType="post" />
         {posts.map(post => this.renderPost(post))}
         <Button variant="contained" color="primary" onClick={() => this.handleLoadMore()}>
           <AddIcon />Load more

@@ -7,18 +7,19 @@ import { queryManager } from 'lapki'; // eslint-disable-line import/no-extraneou
 
 import connectionManager from './graphqlConnectionManager';
 
-export default function (documentType, document) {
+export default function () {
   return function withMutation(WrappedComponent) {
     class withMutationClass extends Component {
       constructor(props) {
         super(props);
         this.state = {
-          fields: this.initializeFields(),
+          fields: this.initializeFields(props),
           firstSaveAttempted: false,
         };
       }
 
       isNew = () => {
+        const { document } = this.props;
         if(document && (document.id || document._id)) return false;
         return true;
       }
@@ -49,7 +50,8 @@ export default function (documentType, document) {
       //     error: 'Too short',
       //     touched: 'true',
       //   }
-      initializeFields = () => {
+      initializeFields = (props) => {
+        const { document } = props;
         const fields = {};
         if(typeof document !== 'object') return fields;
 
@@ -169,6 +171,7 @@ export default function (documentType, document) {
       }
 
       mutate = (doc, operation) => {
+        const { documentType } = this.props;
         const connection = connectionManager.getDefault();
         const isNew = this.isNew();
         let verb;
@@ -226,16 +229,19 @@ export default function (documentType, document) {
           fields: this.state.fields,
         };
 
-        return <WrappedComponent save={this.save} fieldProps={fieldProps} errors={errors} document={document} {...rest} />;
+        return <WrappedComponent save={this.save} fieldProps={fieldProps} errors={errors} {...rest} />;
       }
     }
     withMutationClass.propTypes = {
       onMutationSuccess: PropTypes.func,
       onMutationError: PropTypes.func,
+      document: PropTypes.object,
+      documentType: PropTypes.string.isRequired,
     };
     withMutationClass.defaultProps = {
       onMutationSuccess: null,
       onMutationError: null,
+      document: undefined,
     };
 
     return withMutationClass;

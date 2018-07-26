@@ -22,7 +22,7 @@ const styles = () => ({
   },
 });
 
-class AddPostInner extends Component {
+class AddPost extends Component {
   handleAddPostClick = () => {
     this.props.save();
   }
@@ -59,19 +59,19 @@ class AddPostInner extends Component {
     );
   }
 }
-AddPostInner.propTypes = {
+AddPost.propTypes = {
   classes: PropTypes.object.isRequired,
   fieldProps: PropTypes.object.isRequired,
   save: PropTypes.func.isRequired,
 };
 
-AddPostInner.propTypes = {
+AddPost.propTypes = {
 
 };
 
-const AddPost = compose(
-  withMutation('post'),
+const AddPostWithHOCs = compose(
+  withMutation(),
   withStyles(styles),
-)(AddPostInner);
+)(AddPost);
 
-export default AddPost;
+export default props => <AddPostWithHOCs documentType="post" {...props} />;
