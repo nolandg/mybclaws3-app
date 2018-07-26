@@ -88,19 +88,11 @@ EditModalNoHOCs.propTypes = {
   classes: PropTypes.object.isRequired,
   save: PropTypes.func.isRequired,
 };
-const EditModal = ({ document, documentType, ...rest }) => {
-  // const C = compose(
-  //   withStyles(modalStyles),
-  //   withMutationModalHelperClass(documentType, document),
-  // )(EditModalNoHOCs);
-  // return <C document={document} documentType={documentType} {...rest} />;
-  if(document === 234) return 234;
-  return <SimpleComponent2 document={document} />;
-};
-EditModal.propTypes = {
-  document: PropTypes.object.isRequired,
-  documentType: PropTypes.string.isRequired,
-};
+
+
+function withSimple(WrappedComponent) {
+  return props => <WrappedComponent {...props} />;
+}
 
 class SimpleComponent2 extends Component {
   constructor(props) {
@@ -114,6 +106,23 @@ class SimpleComponent2 extends Component {
 }
 SimpleComponent2.propTypes = {
   document: PropTypes.object.isRequired,
+};
+
+const EditModal = ({ document, documentType, ...rest }) => {
+  // const C = compose(
+  //   withStyles(modalStyles),
+  //   withMutationModalHelperClass(documentType, document),
+  // )(EditModalNoHOCs);
+  // return <C document={document} documentType={documentType} {...rest} />;
+  if(document === 234) return 234;
+  const C = compose(
+    withSimple,
+  )(SimpleComponent2);
+  return <C document={document} documentType={documentType} />;
+};
+EditModal.propTypes = {
+  document: PropTypes.object.isRequired,
+  documentType: PropTypes.string.isRequired,
 };
 
 class SimpleComponent extends Component {
@@ -139,10 +148,7 @@ class PostsList extends Component {
   renderPost = post => (
     <div key={`${post._id}_oooooooo`}>
       <SimpleComponent document={post} key={post._id} />
-      <div key={`${post._id}_ppppppppoop`}>
-      Title: {post.title}
-        <EditModal document={post} documentType="post" />
-      </div>
+      <EditModal document={post} documentType="post" />
     </div>
   )
 
