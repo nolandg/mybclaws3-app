@@ -1,12 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { withStyles } from '@material-ui/core/styles';
-// import Typography from '@material-ui/core/Typography';
-// import Modal from '@material-ui/core/Modal';
-// import Button from '@material-ui/core/Button';
-// import SaveIcon from '@material-ui/icons/Save';
-// import Divider from '@material-ui/core/Divider';
-// import { compose } from 'react-apollo';
 
 import withMutation from './withMutation';
 
@@ -28,7 +21,6 @@ function withMutationModalHelper(WrappedComponent) {
     };
 
     handleClose = () => {
-      console.log('i am closing now');
       this.setState({ modalOpen: false });
     };
 
@@ -52,7 +44,7 @@ function withMutationModalHelper(WrappedComponent) {
   }
   withMutationModalHelperClass.propTypes = {
     document: PropTypes.object,
-    documentType: PropTypes.string.isRequired,
+    collection: PropTypes.object.isRequired,
     registerCallbacks: PropTypes.func.isRequired,
   };
   withMutationModalHelperClass.defaultProps = {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import fetch from 'isomorphic-fetch';
-import deepGet from 'lodash.get';
 import deepSet from 'lodash.set';
+import qatch from 'await-to-js';
 import { queryManager } from 'lapki'; // eslint-disable-line import/no-extraneous-dependencies
 
-import connectionManager from './graphqlConnectionManager';
+import connectionManager from './connectionManager';
 
 export default function () {
   return function withMutation(WrappedComponent) {
@@ -38,34 +38,32 @@ export default function () {
         return fields;
       }
 
-      getTouchedFields = () => {
-        const fields = [];
-        Object.keys(this.state.fields).forEach((name) => {
-          const field = this.state.fields[name];
-          if(!field.touched) return;
-          fields.push(field);
-        });
-        return fields;
-      }
-
       // Example field:
       //   {
       //     name: 'title',
       //     value: 'My Title',
       //     error: 'Too short',
-      //     touched: 'true',
       //   }
       initializeFields = (props) => {
-        const { document } = props;
+        const { document, collection } = props;
+        const { schema } = collection;
         const fields = {};
-        if(typeof document !== 'object') return fields;
 
-        Object.keys(document).forEach((name) => {
-          fields[name] = {
-            name,
-            touched: false,
+        Object.keys(schema.fields).forEach((fieldName) => {
+          const schemaField = schema.fields[fieldName];
+
+          // Firs try to get initial value from document
+          let value = document ? document[fieldName] : undefined;
+          if(value === undefined) {
+            // No document available or this field isn't in the document
+            // Get a default value from schema
+            value = schemaField.default();
+          }
+
+          fields[fieldName] = {
+            name: fieldName,
+            value,
             error: null,
-            value: document[name],
           };
         });
 
@@ -92,18 +90,10 @@ export default function () {
         }, cb);
       }
 
-      markFieldAsTouched = (name, cb) => {
-        this.setState((state) => {
-          deepSet(state.fields, `${name}.touched`, true);
-          return state;
-        }, cb);
-      }
-
       handleFieldValueChange = (e, name, value) => {
         this.setFieldValue(name, value, () => {
           if(this.state.firstSaveAttempted) this.recheckForErrors();
         });
-        this.markFieldAsTouched(name);
       }
 
       recheckForErrors = () => {
@@ -112,56 +102,57 @@ export default function () {
         this.validateDoc(doc);
       }
 
-      validateDoc = () => {
-        let valid = true;
-        const value = deepGet(this.state.fields, 'title.value');
-        if(value === 'noland') {
-          this.setFieldError('title', 'You cannot be Noland');
-          valid = false;
+      validateDoc = async (doc, setErrors = true) => {
+        const { collection } = this.props;
+        const { schema } = collection;
+        const [error, castDoc] = await qatch(schema.validate(doc, { abortEarly: false }));
+
+        if(error) {
+          if(setErrors) {
+            error.inner.forEach(({ message, path }) => {
+              this.setFieldError(path, message);
+            });
+          }
+          return false;
         }
 
-        return valid;
+        return castDoc;
       }
 
       assembleDocument = () => {
         const doc = {};
-        this.getTouchedFields().forEach((field) => {
+        this.getFields().forEach((field) => {
           doc[field.name] = field.value;
         });
-
-        // Always include id or _id fields if they exist even if they haven't been touched
-        if(this.state.fields.id) doc.id = this.state.fields.id.value;
-        if(this.state.fields._id) doc._id = this.state.fields._id.value;
 
         return doc;
       }
 
       clearErrors = () => {
-        this.getTouchedFields().forEach((field) => {
+        this.getFields().forEach((field) => {
           this.setFieldError(field.name, null);
         });
       }
 
       extractErrorsFromFields = () => {
         const errors = [];
-        this.getTouchedFields().forEach((field) => {
+        this.getFields().forEach((field) => {
           if(field.error) errors.push(field.error);
         });
         return errors;
       }
 
-      save = () => {
+      save = async () => {
         this.setState({ firstSaveAttempted: true });
         this.clearErrors();
 
         const doc = this.assembleDocument();
-        const isValid = this.validateDoc(doc);
-        if(!isValid) {
-          console.log('Validation failed');
+        const castDoc = await this.validateDoc(doc);
+        if(!castDoc) {
           return;
         }
 
-        this.mutate(doc, 'save');
+        this.mutate(castDoc, 'save');
       }
 
       handleMutationSuccess = (doc) => {
@@ -176,11 +167,11 @@ export default function () {
       }
 
       mutate = (doc, operation) => {
-        const { documentType } = this.props;
-        const connection = connectionManager.getDefault();
+        const { typeName, connectionName } = this.props.collection;
+        const connection = connectionManager.get(connectionName);
         const isNew = this.isNew();
         let verb;
-        let uri = `${connection.uri}/${documentType}`;
+        let uri = `${connection.uri}/${typeName}`;
 
         if(isNew && (operation === 'save')) {
           verb = 'POST';
@@ -251,7 +242,7 @@ export default function () {
     }
     withMutationClass.propTypes = {
       document: PropTypes.object,
-      documentType: PropTypes.string.isRequired,
+      collection: PropTypes.object.isRequired,
     };
     withMutationClass.defaultProps = {
       document: undefined,

@@ -12,6 +12,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 import { withStyles } from '@material-ui/core/styles';
 
+import PostCollection from './collections/Post';
 import AddPost from './AddPost';
 import { TextField } from './lapki/FormFields';
 import withMutationModalHelperClass from './lapki/withMutationModalHelper';
@@ -45,11 +46,6 @@ const modalStyles = theme => ({
 });
 
 class EditModalNoHOCs extends Component {
-  constructor(props) {
-    super(props);
-    console.log('EditModalNoHOCs constructor');
-  }
-
   render() {
     const { modalOpen, handleClose, handleOpen, fieldProps, classes, save } = this.props;
 
@@ -95,20 +91,18 @@ const EditModal = compose(
 )(EditModalNoHOCs);
 
 EditModal.propTypes = {
-  document: PropTypes.object.isRequired,
-  documentType: PropTypes.string.isRequired,
+  document: PropTypes.object,
+  collection: PropTypes.object.isRequired,
+};
+EditModal.defaultProps = {
+  document: undefined,
 };
 
 class PostsList extends Component {
-  constructor(props) {
-    super(props);
-    console.log('PostsList constructor');
-  }
-
   renderPost = post => (
     <div key={post._id}>
       Title: {post.title}<br />
-      <EditModal document={post} documentType="post" />
+      <EditModal document={post} collection={PostCollection} />
     </div>
   )
 
@@ -136,7 +130,7 @@ class PostsList extends Component {
         <Typography variant="display3" gutterBottom>
           Possssssssssss
         </Typography>
-        <AddPost documentType="post" />
+        <AddPost />
         {posts.map(post => this.renderPost(post))}
         <Button variant="contained" color="primary" onClick={() => this.handleLoadMore()}>
           <AddIcon />Load more

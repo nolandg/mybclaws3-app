@@ -8,7 +8,14 @@ class ConnectionManager {
     };
   }
 
-  get = name => this.connections[name]
+  get = (name) => {
+    const connection = this.connections[name];
+    if(!connection) {
+      throw new Error(`Could not find connection named "${name}"`);
+    }
+
+    return connection;
+  }
 
   getDefault = () => this.connections.default;
 

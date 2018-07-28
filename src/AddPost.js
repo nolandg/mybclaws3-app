@@ -9,6 +9,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
+
+import PostCollection from './collections/Post';
 import { TextField } from './lapki/FormFields';
 import withMutation from './lapki/withMutation';
 
@@ -74,4 +76,4 @@ const AddPostWithHOCs = compose(
   withStyles(styles),
 )(AddPost);
 
-export default props => <AddPostWithHOCs documentType="post" {...props} />;
+export default props => <AddPostWithHOCs collection={PostCollection} {...props} />;
