@@ -10,9 +10,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 
-import PostCollection from './collections/Post';
-import { TextField } from './lapki/FormFields';
-import withMutation from './lapki/withMutation';
+import { TextField } from 'lapki/build/lib/components'; // eslint-disable-line import/no-extraneous-dependencies
+import { withMutation } from 'lapki/build/lib/HOCs'; // eslint-disable-line import/no-extraneous-dependencies
+import PostCollection from '../collections/Post';
 
 const styles = () => ({
   addPostRoot: {
@@ -38,7 +38,7 @@ class AddPost extends Component {
           <Typography variant="title">Add Postee</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.addPostRoot}>
-          <TextField
+          {/* <TextField
             name="title"
             label="Title"
             helperText="Enter a descriptive title for this post"
@@ -51,7 +51,7 @@ class AddPost extends Component {
             helperText="Enter a descriptive NAME for this post"
             margin="normal"
             fieldProps={fieldProps}
-          />
+          /> */}
           <br />
           <Button onClick={this.handleAddPostClick} className={classes.addPostButton} variant="contained" color="primary">
             <SaveIcon />Add a post

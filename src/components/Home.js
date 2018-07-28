@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
+import '../styles/main.scss';
 import PostsList2 from './PostsList';
 
 class Home extends Component {

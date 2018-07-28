@@ -1,6 +1,4 @@
-
-
-import { startClientApp } from 'lapki'; // eslint-disable-line
+import { startClientApp } from 'lapki'; // eslint-disable-line import/no-extraneous-dependencies
 
 import './i18n/setYupLocale';
 import muiTheme from './styles/muiTheme';

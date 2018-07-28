@@ -1,4 +1,4 @@
-import { serverApp } from 'lapki'; // eslint-disable-line
+import { serverApp } from 'lapki'; // eslint-disable-line import/no-extraneous-dependencies
 import routes from './routes';
 import muiTheme from './styles/muiTheme';
 

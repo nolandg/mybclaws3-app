@@ -7,7 +7,7 @@ export default [
     path: '/',
     exact: true,
     component: asyncComponent({
-      loader: () => import('./Home'),
+      loader: () => import('./components/Home'),
       Placeholder: () => <div>...LOADING...</div>, // this is optional, just returns null by default
     }),
   },
@@ -15,7 +15,7 @@ export default [
     path: '/about',
     exact: true,
     component: asyncComponent({
-      loader: () => import('./About'), // required
+      loader: () => import('./components/About'), // required
       Placeholder: () => <div>...LOADING...</div>, // this is optional, just returns null by default
     }),
   },

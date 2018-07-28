@@ -8,14 +8,13 @@ import Modal from '@material-ui/core/Modal';
 import { compose } from 'react-apollo';
 import SaveIcon from '@material-ui/icons/Save';
 import EditIcon from '@material-ui/icons/Edit';
-// import Divider from '@material-ui/core/Divider';
-import { withReactiveQuery } from 'lapki'; // eslint-disable-line
 import { withStyles } from '@material-ui/core/styles';
 
-import PostCollection from './collections/Post';
+import { TextField } from 'lapki/build/lib/components'; // eslint-disable-line import/no-extraneous-dependencies
+import { withReactiveQuery, withMutationModalHelper } from 'lapki/build/lib/HOCs'; // eslint-disable-line import/no-extraneous-dependencies
+import PostCollection from '../collections/Post';
 import AddPost from './AddPost';
-import { TextField } from './lapki/FormFields';
-import withMutationModalHelperClass from './lapki/withMutationModalHelper';
+
 
 const POSTS_QUERY = gql`
   query Posts($start: Int, $limit: Int){
@@ -87,7 +86,7 @@ EditModalNoHOCs.propTypes = {
 
 const EditModal = compose(
   withStyles(modalStyles),
-  withMutationModalHelperClass,
+  withMutationModalHelper,
 )(EditModalNoHOCs);
 
 EditModal.propTypes = {
