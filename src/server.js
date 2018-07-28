@@ -9,7 +9,7 @@ const server = serverApp.create({
     uri: 'http://localhost:1337/graphql',
   },
   appHeaders: {
-    'Made-With-Love-and-Espresso-By': 'Noland Germain',
+    'Made-With-Love-By': 'Noland Germain and Nook espresso',
   },
   razzlePublicDir: process.env.RAZZLE_PUBLIC_DIR,
   razzleAssetsManifestPath: process.env.RAZZLE_ASSETS_MANIFEST,

@@ -7,22 +7,13 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import { createApolloClient } from 'lapki'; // eslint-disable-line
 
-import { setLocale as setYupLocale } from 'yup/lib/customLocale';
+import './i18n/setYupLocale';
 import muiTheme from './styles/muiTheme';
 import routes from './routes';
 
 
 const sheetsManager = new WeakMap();
 const client = createApolloClient({ ssrMode: false });
-
-setYupLocale({
-  mixed: {
-    notType: ({ label, type }) => `${label} must be a ${type}`,
-  },
-  number: {
-    integer: ({ label }) => `${label} must be a whole number integer. Decimals or fracions are not allowed.`,
-  },
-});
 
 
 ensureReady(routes).then(data => hydrate(
