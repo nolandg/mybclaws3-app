@@ -37,7 +37,7 @@ class AddPost extends Component {
     return (
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="title">Add Postee</Typography>
+          <Typography variant="title">Add Postiiiiiiiiiiii</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.addPostRoot}>
           <TextField
@@ -56,7 +56,7 @@ class AddPost extends Component {
           />
           <br />
           <Button onClick={this.handleAddPostClick} className={classes.addPostButton} variant="contained" color="primary">
-            <SaveIcon />Add a postee
+            <SaveIcon />Save
           </Button>
         </ExpansionPanelDetails>
       </ExpansionPanel>
