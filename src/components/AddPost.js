@@ -9,32 +9,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
-import MuiTextField from '@material-ui/core/TextField';
 
 
-// import { TextField } from 'lapki/build/lib/components'; // eslint-disable-line import/no-extraneous-dependencies
 import { withMutation } from 'lapki/build/lib/HOCs'; // eslint-disable-line import/no-extraneous-dependencies
-import { withFormFields } from 'lapki'; // eslint-disable-line import/no-extraneous-dependencies
-// import { withFormFields } from './withFormFields';
+import { TextField } from 'lapki/build/lib/components'; // eslint-disable-line import/no-extraneous-dependencies
+
 import PostCollection from '../collections/Post';
-
-
-// ///////////////////////////////////
-
-/**
- * TextField
- */
-const TextFieldWithoutHOCs = ({ value, ...rest }) => {
-  if(!value) value = '';
-  return <MuiTextField value={value} {...rest} />;
-};
-TextFieldWithoutHOCs.propTypes = {
-  value: PropTypes.any,
-};
-TextFieldWithoutHOCs.defaultProps = {
-  value: '',
-};
-export const TextField = withFormFields(TextFieldWithoutHOCs);
 
 const styles = () => ({
   addPostRoot: {
@@ -67,16 +47,16 @@ class AddPost extends Component {
             margin="normal"
             fieldProps={fieldProps}
           />
-          {/* <TextField
+          <TextField
             name="name"
             label="Name"
             helperText="Enter a descriptive NAME for this post"
             margin="normal"
             fieldProps={fieldProps}
-          /> */}
+          />
           <br />
           <Button onClick={this.handleAddPostClick} className={classes.addPostButton} variant="contained" color="primary">
-            <SaveIcon />Add a post
+            <SaveIcon />Add a postee
           </Button>
         </ExpansionPanelDetails>
       </ExpansionPanel>

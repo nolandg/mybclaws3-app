@@ -127,7 +127,7 @@ class PostsList extends Component {
     return (
       <div>
         <Typography variant="display3" gutterBottom>
-          Post List1232222
+          Post Listy
         </Typography>
         <AddPost />
         {posts.map(post => this.renderPost(post))}
